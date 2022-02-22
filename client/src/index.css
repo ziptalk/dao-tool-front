@@ -1,0 +1,28 @@
+@font-face {
+  font-family: "NeoDunggeunmo Pro";
+  src: url("./utils/styles/fonts/neodgm_pro.ttf") format("truetype"),
+  url("./utils/styles/fonts/neodgm_pro.woff") format("woff"),
+  url("./utils/styles/fonts/neodgm_pro.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Roboto Mono";
+  src: 
+  /* url("./utils/styles/fonts/RobotoMono-Italic-VariableFont_wght.ttf") format("truetype"), */
+  url("./utils/styles/fonts/RobotoMono-VariableFont_wght.ttf") format("truetype");
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif, 'Roboto Mono', 'NeoDunggeunmo Pro';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* font-family: "NeoDunggeunmo Pro"; */
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
