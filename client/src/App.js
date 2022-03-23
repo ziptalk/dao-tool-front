@@ -8,7 +8,7 @@ import {
   useHistory,
   useParams,
 } from "react-router-dom";
-import { IntroPage } from "./pages";
+import { IntroPage, MyPage, ViewAllPage, AllBadgesPage, GetBadgePage, UserPage } from "./pages";
 import { Helmet } from "react-helmet";
 import ReactGA from "react-ga";
 import favicon from "./assets/images/favicon.ico";
@@ -49,6 +49,11 @@ function App() {
           {/* <Suspense fallback={<div>...</div>}>
             <Routes> */}
           <Route exact path="/" element={<IntroPage />} />
+          <Route exact path="/mypage" element={<MyPage />} />
+          <Route exact path="/viewall" element={<ViewAllPage />} />
+          <Route exact path="/allbadges" element={<AllBadgesPage />} />
+          <Route exact path="/getbadge" element={<GetBadgePage />} />
+          <Route path="/:userid" element={<UserPage />} />
           {/* </Routes>
           </Suspense> */}
         </Routes>

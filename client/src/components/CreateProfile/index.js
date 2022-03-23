@@ -1,9 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import styled from "styled-components";
 import Palette from "../../constants/palette";
 import WalletIcon from "../../assets/icons/walletIcon.svg";
 import { RiPencilFill } from "react-icons/ri";
 import { BsCheckLg, BsTrash } from "react-icons/bs";
+import { IconList } from "./iconList";
+import { signup, login } from "../../axios/auth";
+import { renderMatches, useNavigate } from "react-router-dom";
 
 const forwarderOrigin = "http://localhost:8080";
 
@@ -94,6 +97,7 @@ const WalletListContainer = styled.div`
 const WalletItemContainer = styled.div`
   display: flex;
   margin-bottom: 10px;
+  position: relative;
 `;
 
 const EditButton = styled.button`
@@ -261,21 +265,54 @@ const SubmitButton = styled.button`
   right: 0px;
 `;
 
+const WalletIconSelectBox = styled.div`
+  width: 437px;
+  height: 100px;
+  border-radius: 10px;
+  background-color: rgba(255, 255, 255, 0.8);
+  position: absolute;
+  z-index: 2;
+  top: 60px;
+`;
+
+const IconContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  margin: 8px 10px;
+  margin-right: 0px;
+`;
+
+const IconButton = styled.button`
+  width: 32px;
+  height: 32px;
+  background-repeat: no-repeat;
+  background-size: cover;
+  border: 0;
+  background-color: transparent;
+  margin: 5px;
+`;
+
 const CreateProfile = ({ address }) => {
   const tmpList = [
     {
       walletName: "Metamask Wallet",
       walletIcon: WalletIcon,
       walletAddress: address,
+      loginAvailable: 0,
+      viewDataAvailable: 1,
     },
     {
       walletName: "Solana Wallet",
       walletIcon: WalletIcon,
       walletAddress: address,
+      loginAvailable: 0,
+      viewDataAvailable: 1,
     },
   ];
 
   const [addressList, setAddressList] = useState(tmpList);
+  const [profileImage, setProfileImage] = useState();
   const [userName, setUserName] = useState("");
   const [editWalletId, setEditWalletId] = useState(-1);
   const [walletNameValue, setWalletNameValue] = useState("");
@@ -283,6 +320,8 @@ const CreateProfile = ({ address }) => {
   const [walletIconValue, setWalletIconValue] = useState("");
   const [introductionValue, setIntroductionValue] = useState("");
   const [addClick, setAddClick] = useState(false);
+  const [iconChangeClick, setIconChangeClick] = useState(false);
+  const history = useNavigate();
 
   useEffect(() => {}, [addClick]);
 
@@ -292,23 +331,119 @@ const CreateProfile = ({ address }) => {
       walletName: "",
       walletIcon: WalletIcon,
       walletAddress: "",
+      loginAvailable: 0,
+      viewDataAvailable: 1,
     });
     console.log(tmpAddressList);
     setAddressList(tmpAddressList);
     console.log(addressList);
-    setAddClick(!addClick)
+    setAddClick(!addClick);
   };
 
-  const submitButtonOnClick = () => {
-    
-  }
+  const submitButtonOnClick = async () => {
+    localStorage.setItem("nickname", userName);
+    localStorage.setItem("introduce", introductionValue);
+    localStorage.setItem("currentWalletName", walletNameValue);
+    localStorage.setItem("currentWalletIcon", WalletIcon);
+    localStorage.setItem("profileImage", profileImage.imagePreviewUrl);
+
+    const formData = new FormData();
+    if (profileImage !== null) {
+      formData.append("imageFile", profileImage.file[0]);
+
+      console.log("formdata check");
+      console.log(profileImage.file);
+      console.log(formData);
+
+      const userInfoValue = {
+        id: userName,
+        profileImage: profileImage.file,
+        // profileImage: formData,
+        introduction: introductionValue,
+        url: `https://www.daoon.com/${userName}`,
+      };
+
+      const signupResult = await signup({
+        userInfo: userInfoValue,
+        wallet: addressList,
+      }).then(async () => {
+        const loginResult = await login(address);
+        console.log(loginResult);
+      });
+
+      //body에 formData 담아서 보내기
+    } else {
+    }
+
+    history("/mypage", { state: { isWelcome: true } });
+    // window.location.href = "/mypage"
+  };
+
+  const hiddenFileInput = useRef(null);
+
+  const handleClick = (event) => {
+    // if (hiddenFileInput && hiddenFileInput.current) {
+    hiddenFileInput.current.click();
+    // }
+    console.log("??");
+  };
+
+  const handleChange = (event) => {
+    console.log("hello");
+    let reader = new FileReader();
+    const fileUploaded = event.target.files[0];
+    console.log(fileUploaded);
+    setProfileImage({ file: fileUploaded, imagePreviewUrl: fileUploaded });
+    reader.onloadend = () => {
+      // console.log(reader.result)
+      setProfileImage({ file: fileUploaded, imagePreviewUrl: reader.result });
+    };
+    reader.readAsDataURL(fileUploaded);
+    // setProfileImage(fileUploaded)
+    // props.handleFile(fileUploaded);
+  };
+
+  const IconButtonOnClick = (iconIndex, walletIndex) => {
+    console.log(iconIndex);
+    console.log(walletIndex);
+    let tmpValue = {
+      walletName: walletNameValue,
+      walletIcon: IconList[iconIndex].iconImg,
+      walletAddress: walletAddressValue,
+      loginAvailable: 0,
+      viewDataAvailable: 1,
+    };
+    let tmpWalletList = addressList;
+    tmpWalletList[walletIndex] = tmpValue;
+    setAddressList(tmpWalletList);
+    setIconChangeClick(false);
+  };
 
   return (
     <FullContainer>
       <TopContainer>
         <TitleBox>Create Profile</TitleBox>
         <ProfileImageButtonContainer>
-          <ProfileImageButton>+</ProfileImageButton>
+          {profileImage ? (
+            <ProfileImageButton
+              onClick={handleClick}
+              style={{
+                backgroundImage: `url(${profileImage.imagePreviewUrl})`,
+                backgroundRepeat: "no-repeat",
+                backgroundSize: "cover",
+              }}
+            />
+          ) : (
+            <ProfileImageButton onClick={handleClick}>+</ProfileImageButton>
+          )}
+          <input
+            type="file"
+            ref={hiddenFileInput}
+            onChange={(e) => {
+              handleChange(e);
+            }}
+            style={{ display: "none" }}
+          />
         </ProfileImageButtonContainer>
         <InputContainer>
           <SessionTitle>Id</SessionTitle>
@@ -333,14 +468,35 @@ const CreateProfile = ({ address }) => {
                   {editWalletId == index ? (
                     <>
                       <WalletItemContainer>
+                        {iconChangeClick ? (
+                          <WalletIconSelectBox>
+                            <IconContainer>
+                              {IconList.map((item, iconIndex) => (
+                                <IconButton
+                                  style={{
+                                    backgroundImage: `url(${item.iconImg})`,
+                                  }}
+                                  onClick={() =>
+                                    IconButtonOnClick(iconIndex, index)
+                                  }
+                                />
+                              ))}
+                            </IconContainer>
+                          </WalletIconSelectBox>
+                        ) : (
+                          <></>
+                        )}
                         <EditButton
                           onClick={() => {
+                            let tmpWalletList = addressList;
                             let tmpValue = {
                               walletName: walletNameValue,
-                              walletIcon: WalletIcon,
+                              walletIcon:
+                                tmpWalletList[editWalletId].walletIcon,
                               walletAddress: walletAddressValue,
+                              loginAvailable: 0,
+                              viewDataAvailable: 1,
                             };
-                            let tmpWalletList = addressList;
                             tmpWalletList[editWalletId] = tmpValue;
                             setAddressList(tmpWalletList);
                             setEditWalletId(-1);
@@ -351,8 +507,10 @@ const CreateProfile = ({ address }) => {
                         >
                           <BsCheckLg />
                         </EditButton>
-                        <EditIconChangeButton>
-                          <WalletIconImage src={WalletIcon} />
+                        <EditIconChangeButton
+                          onClick={() => setIconChangeClick(!iconChangeClick)}
+                        >
+                          <WalletIconImage src={item.walletIcon} />
                         </EditIconChangeButton>
                         <EditWalletNameContent
                           value={walletNameValue}
@@ -399,7 +557,7 @@ const CreateProfile = ({ address }) => {
                         <RiPencilFill />
                       </EditButton>
                       <IconChangeButton>
-                        <WalletIconImage src={WalletIcon} />
+                        <WalletIconImage src={item.walletIcon} />
                       </IconChangeButton>
                       <WalletNameContent>
                         <WalletText>{item.walletName}</WalletText>
@@ -429,7 +587,7 @@ const CreateProfile = ({ address }) => {
           <IntroductionLength>
             {introductionValue.length}/100
           </IntroductionLength>
-          <SubmitButton>Submit</SubmitButton>
+          <SubmitButton onClick={submitButtonOnClick}>Submit</SubmitButton>
         </InputContainer>
       </TopContainer>
     </FullContainer>

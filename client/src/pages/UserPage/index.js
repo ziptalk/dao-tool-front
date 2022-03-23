@@ -8,7 +8,7 @@ import AddConnectWalletModal from "../../components/AddConnectWalletModal";
 import ProfileBox from "../../components/ProfileBox";
 import Badges from "../../components/Badges";
 import Badge10 from "../../assets/images/badge10.png";
-import { useLocation } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import { ethers } from "ethers";
 import { getDefaultProvider } from "ethers";
 import { NftProvider, useNft } from "use-nft";
@@ -138,8 +138,10 @@ function Nft() {
   );
 }
 
-const MyPage = () => {
+const UserPage = () => {
   const navigateState = useLocation().state;
+  const { userid } = useParams();
+   console.log(userid)
   const [modalVisible, setModalVisible] = useState(true);
   console.log(navigateState);
   const [userInfo, setUserInfo] = useState({
@@ -163,6 +165,8 @@ const MyPage = () => {
     profileImage: localStorage.getItem("profileImage"),
     //   "https://s3-alpha-sig.figma.com/img/271a/ec5f/909db81709f0488e5612b2abaf79dcea?Expires=1647216000&Signature=VW7ycQjYytN79Fqty6XPPj0el9Crh3N-2NBIUa0AgtKPHbf2VR02p3MMEkk4HKayuND6Zrt7j0L~NQnYcuavK2cKrlo6soWObykWnAVcUF2ST1DlPCRUd7cWEad~fjv0kdlTJupqSGURAudqbZ3-4KPxJgZyBq5gEZe2DWNFHES3BsW8sdN46ROYI~UDs8JdvucS4SOshJWU09HXcPCwqgvvifgEvBx5w3o~aPGP8NI-QyzQUZuJw5Obtb6Y6O2163uiKjMmMn1iWTqrRC1UnoRXSrru6E6oGt6w978T9fz3kVtVpxe0so32CG7gXVF3yJu3BjptPIezJDFebUxdsQ__&Key-Pair-Id=APKAINTVSUGEWH5XD5UA",
   });
+  console.log("hihi")
+  // const [userId, setUserId] = useState(match.params.userid);
 
   const BadgeInfo = [
     {
@@ -240,4 +244,4 @@ const MyPage = () => {
   );
 };
 
-export default MyPage;
+export default UserPage;
