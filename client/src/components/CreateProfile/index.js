@@ -297,14 +297,14 @@ const CreateProfile = ({ address }) => {
   const tmpList = [
     {
       walletName: "Metamask Wallet",
-      walletIcon: WalletIcon,
+      walletIcon: IconList[1].iconImg,
       walletAddress: address,
       loginAvailable: 0,
       viewDataAvailable: 1,
     },
     {
       walletName: "Solana Wallet",
-      walletIcon: WalletIcon,
+      walletIcon: IconList[1].iconImg,
       walletAddress: address,
       loginAvailable: 0,
       viewDataAvailable: 1,
@@ -329,7 +329,7 @@ const CreateProfile = ({ address }) => {
     var tmpAddressList = addressList;
     tmpAddressList.push({
       walletName: "",
-      walletIcon: WalletIcon,
+      walletIcon: IconList[1].iconImg,
       walletAddress: "",
       loginAvailable: 0,
       viewDataAvailable: 1,
@@ -366,16 +366,23 @@ const CreateProfile = ({ address }) => {
       const signupResult = await signup({
         userInfo: userInfoValue,
         wallet: addressList,
-      }).then(async () => {
-        const loginResult = await login(address);
-        console.log(loginResult);
-      });
+      })
+        .then(async (data) => {
+          if (data) {
+            console.log("hi!")
+            console.log(data)
+            const loginResult = await login(address).then(() => {
+              history("/mypage", { state: { isWelcome: true } });
+            });
+            console.log(loginResult);
+          }
+        })
+        .catch(() => {});
 
       //body에 formData 담아서 보내기
     } else {
     }
 
-    history("/mypage", { state: { isWelcome: true } });
     // window.location.href = "/mypage"
   };
 

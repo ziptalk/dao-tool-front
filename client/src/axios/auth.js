@@ -4,7 +4,7 @@ import * as config from "./config";
 // 맨 첫 페이지에서 wallet connect를 할 때, 이미 회원가입이 된 지갑 주소인지 아닌지 여부를 반환한다.
 export const checkSignup = async (walletAddress) => {
   const result = await axios
-    .post(`/users/check?walletAddress=${walletAddress}/`, {
+    .post(process.env.REACT_APP_DB_HOST+`/users/check?walletAddress=${walletAddress}/`, {
       headers: {
         "Content-Type": "application/json",
         "Access-Control-Allow-Credentials": true,
@@ -88,83 +88,88 @@ export const signup = async ({ userInfo, wallet }) => {
 
   console.log(formdata);
 
-  const result5 = await uploadProfileImage(formdata)
-    .then((data) => {
-      console.log("upload image success!");
-      console.log(data);
-    })
-    .catch((error) => {
-      console.log(error);
-    });
+  //   const result5 = await uploadProfileImage(formdata)
+  //     .then((data) => {
+  //       console.log("upload image success!");
+  //       console.log(data);
+  //     })
+  //     .catch((error) => {
+  //       console.log(error);
+  //     });
 
   formdata.append(
     "json",
     `{"id":"${userInfo.id}", "url":"${userInfo.url}", "introduction":"${userInfo.introduction}"}`
   );
 
+  let signupReturn = {};
+
   const result6 = await createUser(formdata)
     .then((data) => {
       console.log("createUser success!");
       console.log(data);
-      const createWalletListResult = createWalletList(JSON.stringify(`{
-        "user" : "${userInfo.id}",
-        "wallet" : ${JSON.stringify(wallet)}
-      }`))
-      .then((data2) => {
-          console.log("createWalletList success!")
-          console.log(data2)
-      })
-      .catch((error) => {
-          console.log(error)
-
-      })
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-
-  const result = await axios
-    .post(
-      `/users/signup`,
-      //   formdata,
-      JSON.stringify({
-        userInfo: {
-          id: "CrossOrigin",
-          profileImage: JSON.stringify(newObject),
-          introduction: "Hi",
-          url: "http://localhost:3000/CrossOrigin",
-        },
-        wallet: [
-          {
-            walletAddress: "0x07B0ea6D444B9B66F3A7709FB1fA75BcDCD67A16",
-            walletName: "FirstWallet",
-            walletIcon:
-              "https://daotool.s3.ap-northeast-2.amazonaws.com/static/wallet-icon/9b1c7829-570e-4d1c-9b87-e13f93b7cec21.png",
-            loginAvailable: 1,
-            viewDataAvailable: 0,
-          },
-        ],
-      }),
-      //   { userInfo, wallet },
-      {
-        headers: {
-          "Content-Type": "application/json",
-          //   "Access-Control-Allow-Credentials": true,
-        },
-        // data: JSON.stringify({ userInfo, wallet }),
+      if (data.isSuccess) {
+        console.log(
+          JSON.stringify({
+            user: userInfo.id,
+            wallet: wallet,
+          })
+        );
+        const createWalletListResult = createWalletList(
+          //   `{
+          //     "user" : "${userInfo.id}",
+          //     "wallet" : ${JSON.stringify(wallet)}
+          //   }`
+          JSON.stringify({
+            user: userInfo.id,
+            wallet: wallet,
+          })
+        )
+          .then((data2) => {
+            console.log("createWalletList success!");
+            console.log(data2);
+            if (data2.isSuccess) {
+              signupReturn = data2;
+            } else {
+              console.log(data2.message);
+              console.log(
+                JSON.stringify({
+                  user: data.result.id,
+                  token: data.result.token,
+                })
+              );
+              const deleteUserResult = deleteUser(
+                JSON.stringify({
+                  user: data.result.id,
+                  token: data.result.token,
+                })
+              ).then((data3) => {
+                signupReturn = data3;
+              });
+              alert(data2.message);
+            }
+          })
+          .catch((error) => {
+            console.log(error);
+            const deleteUserResult = deleteUser(
+              JSON.stringify({
+                user: data.result.id,
+                token: data.result.token,
+              })
+            );
+          });
+      } else {
+        console.log(data.message);
+        alert(data.message);
+        signupReturn = false;
+        throw new Error(data.message);
       }
-    )
-    .then((data) => {
-      console.log("hello signup");
-      console.log(data);
-      //   return data;
     })
     .catch((error) => {
       console.log(error);
-      return error;
     });
 
-  return { hi: "hi" };
+  return signupReturn;
 
   //   return result.data;
 };
@@ -173,9 +178,9 @@ export const login = async (walletAddress) => {
   const result = await axios
     .post(
       `/users/login`,
-      JSON.stringify({
-        walletAddress: "0x07B0ea6D444B9B66F3A7709FB1fA75BcDCD67A16",
-      }),
+      `{
+        "walletAddress": "${walletAddress}",
+      }`,
       {
         headers: {
           "Content-Type": "application/json",
@@ -245,13 +250,15 @@ export const postAdminBadge = async (name, walletData) => {
 
 export const getAdminBadge = async (password) => {
   const result = await axios
-    .get(`/admin/badges`, JSON.stringify({ password: "propwave0806!" }), {
-      headers: {
-        "Content-Type": "application/json",
-        // "Access-Control-Allow-Credentials": true,
-      },
-      // data: JSON.stringify(password),
-    })
+    .get(
+      `/admin/badges`,
+      { params: { password: "propwave0806!" } },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    )
     .then((data) => {
       console.log(data);
       return data;
@@ -305,27 +312,35 @@ export const createUser = async (formData) => {
     redirect: "follow",
   };
 
+  let returnValue = {};
+
   const result = await fetch("/users/signup/user", requestOptions)
     .then((response) => response.text())
-    .then((result) => console.log(result))
+    .then((result) => {
+      console.log(result);
+      console.log("createUser End");
+      returnValue = JSON.parse(result);
+    })
     .catch((error) => console.log("error", error));
 
-  console.log("createUser End");
-  console.log(result);
-
-  return result;
+  return returnValue;
 };
 
 export const createWalletList = async (walletList) => {
-    const result = await axios
-    .get(`/users/signup/wallets`, walletList, {
+  console.log(walletList);
+
+  let returnValue = {};
+
+  const result = await axios
+    .post(`/users/signup/wallets`, {
+      data: walletList,
       headers: {
         "Content-Type": "application/json",
       },
     })
     .then((data) => {
       console.log(data);
-      return data;
+      returnValue = JSON.parse(data);
     })
     .catch((error) => {
       console.log(error);
@@ -333,7 +348,33 @@ export const createWalletList = async (walletList) => {
     });
 
   console.log("createWalletList done!");
-  console.log(result.data);
+  console.log(returnValue);
 
-  return result.data;
-}
+  return returnValue;
+};
+
+export const deleteUser = async (userData) => {
+  console.log(userData);
+
+  let returnValue = {};
+
+  const result = await axios
+    .delete(`/users`, {
+      data: userData,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+    .then((data) => {
+      console.log(data);
+      returnValue = JSON.parse(data);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+
+  console.log("deleteUser done!");
+  console.log(returnValue);
+
+  return returnValue;
+};
