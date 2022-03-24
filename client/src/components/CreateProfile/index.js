@@ -346,6 +346,7 @@ const CreateProfile = ({ address }) => {
     localStorage.setItem("currentWalletName", walletNameValue);
     localStorage.setItem("currentWalletIcon", WalletIcon);
     localStorage.setItem("profileImage", profileImage.imagePreviewUrl);
+    localStorage.setItem("myWalletList", JSON.stringify(addressList))
 
     const formData = new FormData();
     if (profileImage !== null) {
@@ -363,21 +364,23 @@ const CreateProfile = ({ address }) => {
         url: `https://www.daoon.com/${userName}`,
       };
 
-      const signupResult = await signup({
-        userInfo: userInfoValue,
-        wallet: addressList,
-      })
-        .then(async (data) => {
-          if (data) {
-            console.log("hi!")
-            console.log(data)
-            const loginResult = await login(address).then(() => {
-              history("/mypage", { state: { isWelcome: true } });
-            });
-            console.log(loginResult);
-          }
-        })
-        .catch(() => {});
+      // const signupResult = await signup({
+      //   userInfo: userInfoValue,
+      //   wallet: addressList,
+      // })
+      //   .then(async (data) => {
+      //     if (data) {
+      //       console.log("hi!")
+      //       console.log(data)
+      //       const loginResult = await login(address).then(() => {
+      //         history("/mypage", { state: { isWelcome: true } });
+      //       });
+      //       console.log(loginResult);
+      //     }
+      //   })
+      //   .catch(() => {});
+
+      history("/mypage", { state: { isWelcome: true } }); // 이건 api 연결 안됐을 때 임시로
 
       //body에 formData 담아서 보내기
     } else {

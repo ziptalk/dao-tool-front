@@ -7,6 +7,7 @@ import {
   RiArrowUpSFil,
   RiFileCopyLine,
 } from "react-icons/ri";
+import EditProfileModal from "../EditProfileModal";
 
 const BoxContainer = styled.div`
   width: 100%;
@@ -115,6 +116,7 @@ const WalletListDropBox = styled.button`
   border-radius: 8px;
   display: flex;
   justify-content: space-between;
+  position: relative;
 `;
 
 const WalletListFrontText = styled.div`
@@ -178,8 +180,30 @@ const IntroductionText = styled.div`
 `;
 
 const WalletListDropBoxContainer = styled.div`
-    width: 480px;
-`
+  width: 480px;
+  min-height: 30px;
+  border-radius: 10px;
+  background-color: #ffffff;
+  position: absolute;
+  top: 40px;
+  left: -1px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+`;
+
+const WalletAddressOne = styled.button`
+  width: calc(100% - 10px);
+  height: 36px;
+  text-align: left;
+  background-color: #ffffff;
+  color: #777777;
+  font-family: Roboto Mono;
+  font-size: 14px;
+  border: 0;
+  border-radius: 8px;
+  margin: 0px 5px;
+  padding-left: 20px;
+`;
 
 const ProfileBox = ({
   nickname,
@@ -189,10 +213,40 @@ const ProfileBox = ({
   introduce,
   profileImage,
 }) => {
+  const [modalVisible, setModalVisible] = useState(false);
+  const [editProfile, setEditProfile] = useState(false);
+  const [selectedWalletIndex, setSelectedWalletIndex] = useState(0);
+  const [walletDropboxOpen, setWalletDropboxOpen] = useState(false);
+
+  const editProfileOnClick = () => {
+    setModalVisible(true);
+    setEditProfile(true);
+  };
+
+  const openModal = () => {
+    setModalVisible(true);
+  };
+  const closeModal = () => {
+    setModalVisible(false);
+  };
+
+  const handleCopyClipBoard = async (text) => {
+    var textarea = document.createElement("textarea");
+    textarea.value = text; // 복사할 메시지
+    document.body.appendChild(textarea);
+    textarea.select();
+    textarea.setSelectionRange(0, 9999); // For IOS
+    document.execCommand("copy");
+    document.body.removeChild(textarea);
+    alert("링크 복사 완료!");
+  };
+
   return (
     <BoxContainer>
       <TopButtonContainer>
-        <EditProfileButton>Edit Profile</EditProfileButton>
+        <EditProfileButton onClick={editProfileOnClick}>
+          Edit Profile
+        </EditProfileButton>
         <HitsBox>
           <HitsTitle>hits</HitsTitle>
           <HitsNumber>
@@ -206,23 +260,50 @@ const ProfileBox = ({
         <UpperInfo>
           <NickNameContainer>
             <NickNameText>{nickname}</NickNameText>
-            <CopyIcon>
+            <CopyIcon onClick={()=>handleCopyClipBoard(`https://0xpersona.xyz/${nickname}`)}>
               <ImLink />
             </CopyIcon>
           </NickNameContainer>
           <LowerInfo>
-            <WalletListDropBox>
+            <WalletListDropBox onClick={()=>setWalletDropboxOpen(!walletDropboxOpen)}>
               <WalletListFrontText>
-                <WalletIcon src={walletList[0].icon} />
-                <WalletName>{walletList[0].walletName}</WalletName>
+                <WalletIcon src={walletList[selectedWalletIndex].walletIcon} />
+                <WalletName>{walletList[selectedWalletIndex].walletName}</WalletName>
                 <WalletDivideLine />
-                <WalletAddress>{walletList[0].walletAddress}</WalletAddress>
+                <WalletAddress>{walletList[selectedWalletIndex].walletAddress}</WalletAddress>
               </WalletListFrontText>
               <DropDownIcon>
                 <RiArrowDownSFill />
               </DropDownIcon>
+              {walletDropboxOpen?
+              <WalletListDropBoxContainer>
+                {walletList.map((item, index) => (
+                  <>
+                    {selectedWalletIndex == index ? (
+                      <WalletAddressOne
+                        style={{
+                          backgroundColor: "#222222",
+                          color: "#FFFFFF",
+                        }}
+                      >
+                        {item.walletAddress}
+                      </WalletAddressOne>
+                    ) : (
+                      <WalletAddressOne
+                        onClick={() => {
+                          setSelectedWalletIndex(index);
+                          localStorage.setItem("selectWalletAddress", walletList[index])
+                          setWalletDropboxOpen(false);
+                        }}
+                      >
+                        {item.walletAddress}
+                      </WalletAddressOne>
+                    )}
+                  </>
+                ))}
+              </WalletListDropBoxContainer>:<></>}
             </WalletListDropBox>
-            <CopyIcon>
+            <CopyIcon onClick={()=>handleCopyClipBoard(walletList[selectedWalletIndex].walletAddress)}>
               <RiFileCopyLine />
             </CopyIcon>
           </LowerInfo>
@@ -231,6 +312,18 @@ const ProfileBox = ({
       <IntroductionContainer>
         <IntroductionText>{introduce}</IntroductionText>
       </IntroductionContainer>
+      {editProfile ? (
+        <>
+          <EditProfileModal
+            visible={modalVisible}
+            closable={true}
+            maskClosable={true}
+            onClose={closeModal}
+          />
+        </>
+      ) : (
+        <></>
+      )}
     </BoxContainer>
   );
 };

@@ -163,8 +163,8 @@ const WalletList = () => {
         method: "eth_accounts",
       });
       setWalletAddress(accounts[0]);
-      const isSignup = await checkSignup(accounts[0]);
-      // const isSignup = 0
+      // const isSignup = await checkSignup(accounts[0]);
+      const isSignup = 0 // api 연결 안됐을 때 임시. 위에가 진짜
       localStorage.setItem("currentWalletAddress", accounts[0]);
       console.log(accounts);
       if (isSignup == 1) {

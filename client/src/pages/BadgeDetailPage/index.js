@@ -120,7 +120,6 @@ const DescriptionBox = styled.div`
   border-radius: 10px;
 `;
 
-
 const FinishButton = styled.button`
   width: 187px;
   height: 42px;
@@ -169,7 +168,6 @@ const JoinedAtText = styled.div`
   margin-right: 27px;
 `;
 
-
 const BadgeDetailPage = () => {
   const navigate = useLocation().state;
   const history = useNavigate();
@@ -181,16 +179,32 @@ const BadgeDetailPage = () => {
     localStorage.getItem("currentWalletAddress")
   );
 
-  useEffect(async() => {
-    const tmpBadgeInfo = await getAllBadges("oldest"); // newest, oldest, members
-    console.log(tmpBadgeInfo.data.result);
+  useEffect(async () => {
+    // const tmpBadgeInfo = await getAllBadges("oldest"); // newest, oldest, members
+    // console.log(tmpBadgeInfo.data.result);
 
-    const tmpInfo = tmpBadgeInfo.data.result;
+    // const tmpInfo = tmpBadgeInfo.data.result;
+    const tmpInfo = [
+      {
+        name: "DAO_ON_Welcome_badge",
+        image:
+          "https://daotool.s3.ap-northeast-2.amazonaws.com/media/badge_img/6aeb8ebb-b56e-418b-88bd-c889f3f585bfFrame+98+(1).png",
+        createdAt: "2022-03-24T22:31:16.000+00:00",
+        joinedWalletCount: 0,
+      },
+      {
+        name: "FLEX_NFT_holder",
+        image:
+          "https://daotool.s3.ap-northeast-2.amazonaws.com/media/badge_img/8d077476-e78d-4752-ad21-b8b0e9844c8cimage+43.png",
+        createdAt: "2022-03-24T22:36:12.000+00:00",
+        joinedWalletCount: 0,
+      },
+    ];
 
-    const badgeImage = tmpInfo[tmpInfo.findIndex(x => x.name == name)].image
+    const badgeImage = tmpInfo[tmpInfo.findIndex((x) => x.name == name)].image;
     // badgeInfo불러오기
     setBadgeInfo({
-      name: name.replaceAll("_", ' '),
+      name: name.replaceAll("_", " "),
       img: badgeImage,
       description: (
         <>
@@ -211,7 +225,9 @@ const BadgeDetailPage = () => {
   }, []);
 
   const finishOnClick = () => {
-    history("/mypage", { state: { isSuccess: true, name: badgeInfo.name, img: badgeInfo.img } });
+    history("/mypage", {
+      state: { isSuccess: true, name: badgeInfo.name, img: badgeInfo.img },
+    });
   };
   return (
     <FullContainer>
@@ -247,7 +263,6 @@ const BadgeDetailPage = () => {
         <TargetBox>{badgeInfo.target}</TargetBox>
         <DescriptionBox>{badgeInfo.description}</DescriptionBox>
 
-        
         <MembersTable />
       </ContentContainer>
     </FullContainer>
