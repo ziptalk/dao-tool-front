@@ -20,20 +20,21 @@ const ContentContainer = styled.div`
 `;
 
 const ViewAllPage = () => {
-  const BadgeInfo = [
-    {
-      title: "Cripto Robins 31 POAP",
-      img: Badge10,
-      people: 128,
-      joinedAt: "January 02, 2022"
-    },
-    {
-      title: "Cripto Robins 31 POAP",
-      img: Badge10,
-      people: 128,
-      joinedAt: "January 02, 2022"
-    },
-  ];
+  // const BadgeInfo = [
+  //   {
+  //     title: "Cripto Robins 31 POAP",
+  //     img: Badge10,
+  //     people: 128,
+  //     joinedAt: "January 02, 2022"
+  //   },
+  //   {
+  //     title: "Cripto Robins 31 POAP",
+  //     img: Badge10,
+  //     people: 128,
+  //     joinedAt: "January 02, 2022"
+  //   },
+  // ];
+  const BadgeInfo = JSON.parse(localStorage.getItem("badgeInfo"))
   return (
     <FullContainer>
       <Header />

@@ -4,6 +4,7 @@ import Palette from "../../constants/palette";
 import Header from "../../components/Header";
 import Badge10 from "../../assets/images/badge10.png";
 import Badges from "../../components/AllBadges";
+import {getAllBadges} from "../../axios/badges";
 
 const FullContainer = styled.div`
   min-width: 1440px;
@@ -20,6 +21,7 @@ const ContentContainer = styled.div`
 `;
 
 const AllBadgesPage = () => {
+  const [badgeInfo, setBadgeInfo] = useState([])
   const BadgeInfo = [
     {
       title: "Cripto Robins 31 POAP",
@@ -28,11 +30,17 @@ const AllBadgesPage = () => {
       joinedAt: "January 02, 2022"
     }
   ];
+
+  useEffect(async()=>{
+    const tmpBadgeInfo = await getAllBadges("oldest") // newest, oldest, members
+    console.log(tmpBadgeInfo.data.result)
+    setBadgeInfo(tmpBadgeInfo.data.result)
+  },[])
   return (
     <FullContainer>
       <Header />
       <ContentContainer>
-        <Badges badgeInfo={BadgeInfo} />
+        <Badges badgeInfo={badgeInfo} />
       </ContentContainer>
     </FullContainer>
   );

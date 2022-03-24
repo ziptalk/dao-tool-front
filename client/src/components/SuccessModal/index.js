@@ -20,6 +20,8 @@ function SuccessModal({
   closable,
   visible,
   children,
+  badgeName,
+  badgeImage
 }) {
   const navigate = useNavigate();
   const currentUrl = window.location.href;
@@ -71,13 +73,13 @@ function SuccessModal({
           <ContentContainer>
             <PopupTitle>🎉 Success!</PopupTitle>
             <DescriptionBox>
-              You got a "DAOON Welcome Badge".
+              You got a "{badgeName}".
             </DescriptionBox>
             <SmallDescription>
             If you want more badges, find and add them in the "all badges" tab.
             </SmallDescription>
-            <BadgeImage src={WelcomeBadge} />
-            <BadgeTitle>DAO ON Welcome Badge</BadgeTitle>
+            <BadgeImage src={badgeImage} />
+            <BadgeTitle>{badgeName}</BadgeTitle>
             <BottomButton onClick={goDashboardOnClick}>Go to Dashboard</BottomButton>
             <CloseButton onClick={closeOnClick}>
               <RiCloseFill />

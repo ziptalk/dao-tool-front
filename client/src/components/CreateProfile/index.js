@@ -8,7 +8,7 @@ import { IconList } from "./iconList";
 import { signup, login } from "../../axios/auth";
 import { renderMatches, useNavigate } from "react-router-dom";
 
-const forwarderOrigin = "http://localhost:8080";
+const forwarderOrigin = "http://0xpersona.club";
 
 const FullContainer = styled.div`
   width: 540px;

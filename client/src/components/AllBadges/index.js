@@ -32,12 +32,15 @@ const OneBadge = styled.div`
   height: 200px;
   border: 1px solid #c4c4c4;
   border-radius: 20px;
+  background-color: transparent;
+`;
+
+const JoinedAt = styled.div`
+  width: 100%;
+  text-align: right;
 `;
 
 const JoinedAtText = styled.div`
-  width: 100%;
-  display: flex;
-  justify-content: right;
   color: #c4c4c4;
   font-family: Roboto Mono;
   font-size: 12px;
@@ -65,19 +68,25 @@ const BadgeBox = styled.button`
 
 const PeopleNumber = styled.div`
   height: 30px;
-  margin: auto 0px;
+  width: 100%;
+  text-align: right;
+  // margin: auto 0px;
   margin-top: 15px;
+  display: flex;
+  justify-content: right;
   font-size: 18px;
-  color: #C4C4C4;
+  color: #c4c4c4;
   font-family: NeoDunggeunmo Pro;
 `;
 
 const PeopleIcon = styled.span`
   margin-right: 3px;
+  margin-top: -1px;
+  height: 50px;
 `;
 
 const PeopleNum = styled.span`
-  margin-top: -10px;
+  margin-right: 22px;
 `;
 
 const ContentBox = styled.div`
@@ -90,16 +99,18 @@ const ContentBox = styled.div`
 
 const BadgeNameBox = styled.div`
   width: 240px;
-  height: 100px;
+  height: 100%;
   margin-left: 18px;
   display: flex;
 `;
 
 const BadgeNameBoxText = styled.div`
   margin: auto 0px;
+  width: 100%;
   font-family: NeoDunggeunmo Pro;
   font-size: 32px;
   color: #ffffff;
+  word-break: keep-all;
 `;
 
 const Badges = ({ badgeInfo }) => {
@@ -114,22 +125,31 @@ const Badges = ({ badgeInfo }) => {
       </TitleBox>
       <BadgeGroup>
         {badgeInfo.map((item, index) => (
-          <OneBadge>
+          <OneBadge onClick={()=>{window.location.href=`/badgeDetail/${item.name}`}}>
             <PeopleNumber>
               <PeopleIcon>
                 <MdPeopleOutline />
               </PeopleIcon>
-              <PeopleNum>{item.people}</PeopleNum>
+              <PeopleNum>{item.joinedWalletCount}</PeopleNum>
             </PeopleNumber>
             <ContentBox>
-              <BadgeBox
-                style={{ backgroundImage: `url(${item.img})` }}
-              ></BadgeBox>
+              {/* <BadgeBox
+                style={{ backgroundImage: `url(${item.image})` }}
+              ></BadgeBox> */}
+              <img src={item.image} />
               <BadgeNameBox>
-                <BadgeNameBoxText>{item.title}</BadgeNameBoxText>
+                <BadgeNameBoxText>{item.name.replaceAll('_', ' ')}</BadgeNameBoxText>
               </BadgeNameBox>
             </ContentBox>
-            <JoinedAtText>{item.joinedAt} Created</JoinedAtText>
+            <JoinedAt>
+              <JoinedAtText>
+                {new Intl.DateTimeFormat("en-US", { month: "long" }).format(
+                  Date.parse(item.createdAt)
+                )}{" "}
+                {new Date(item.createdAt).getDate()},{" "}
+                {new Date(item.createdAt).getFullYear()} Created
+              </JoinedAtText>
+            </JoinedAt>
           </OneBadge>
         ))}
       </BadgeGroup>

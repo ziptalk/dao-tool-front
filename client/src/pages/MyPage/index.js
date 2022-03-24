@@ -12,6 +12,7 @@ import { useLocation } from "react-router-dom";
 import { ethers } from "ethers";
 import { getDefaultProvider } from "ethers";
 import { NftProvider, useNft } from "use-nft";
+import TransactionTable from "../../components/TransactionTable/transactionTable";
 
 // const provider = new ethers.providers.Web3Provider(window.ethereum)
 const fetcher = ["ethers", { ethers, provider: ethers.getDefaultProvider() }];
@@ -29,6 +30,14 @@ const ContentContainer = styled.div`
   //   margin-left: 130px;
   //   margin-right: 130px;
 `;
+
+const NFTConsole = styled.div`
+  margin-top: 30px;
+  font-size: 24px;
+  color: #FFFFFF;
+  font-family: Roboto Mono;
+`
+
 
 function NFT() {
   const [badgeInfo, setBadgeInfo] = useState();
@@ -105,37 +114,40 @@ function Nft() {
   );
 
   // nft.loading is true during load.
-  if (loading) return <>Loading…</>;
+  if (loading) return <NFTConsole>Loading your NFT list…</NFTConsole>;
 
   // nft.error is an Error instance in case of error.
-  if (error || !nft) {
-      console.log(error)
-    console.log(error.errors)
-    return <>Error.</>;
-  }
-  console.log(nft)
+  else if (error || !nft) {
+    console.log(error);
+    console.log(error.errors);
+    return <NFTConsole>Error loading NFT list.</NFTConsole>;
+  } else {
+    console.log(nft);
 
-  const badgeInfo = [
+    const badgeInfo = [
       {
         title: nft.name,
         img: nft.image,
         people: 128,
-      }
-  ]
+      },
+    ];
 
-  // You can now display the NFT metadata.
-  return (
+    localStorage.setItem("badgeInfo", JSON.stringify(badgeInfo));
+
+    // You can now display the NFT metadata.
+    return (
       <>
-      <Badges badgeInfo={badgeInfo} />
-    {/* <section>
+        <Badges badgeInfo={badgeInfo} />
+        {/* <section>
       <h1>{nft.name}</h1>
       <img src={nft.image} alt="" />
       <p>{nft.description}</p>
       <p>Owner: {nft.owner}</p>
       <p>Metadata URL: {nft.metadataUrl}</p>
     </section> */}
-    </>
-  );
+      </>
+    );
+  }
 }
 
 const MyPage = () => {
@@ -212,6 +224,8 @@ const MyPage = () => {
                     closable={true}
                     maskClosable={true}
                     onClose={closeModal}
+                    badgeName={navigateState.name}
+                    badgeImage={navigateState.img}
                   />
                 )}
               </>
@@ -234,6 +248,7 @@ const MyPage = () => {
           {/* <Badges badgeInfo={BadgeInfo} /> */}
           {/* <NFT /> */}
           <App />
+          <TransactionTable />
         </ContentContainer>
       </FullContainer>
     </NftProvider>

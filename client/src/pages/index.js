@@ -4,3 +4,4 @@ export { default as ViewAllPage } from "./ViewAllPage";
 export { default as AllBadgesPage } from "./AllBadgesPage";
 export { default as GetBadgePage } from "./GetBadgePage";
 export { default as UserPage } from "./UserPage";
+export { default as BadgeDetailPage } from "./BadgeDetailPage";

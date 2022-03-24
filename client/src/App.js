@@ -8,7 +8,7 @@ import {
   useHistory,
   useParams,
 } from "react-router-dom";
-import { IntroPage, MyPage, ViewAllPage, AllBadgesPage, GetBadgePage, UserPage } from "./pages";
+import { IntroPage, MyPage, ViewAllPage, AllBadgesPage, GetBadgePage, UserPage, BadgeDetailPage } from "./pages";
 import { Helmet } from "react-helmet";
 import ReactGA from "react-ga";
 import favicon from "./assets/images/favicon.ico";
@@ -53,6 +53,7 @@ function App() {
           <Route exact path="/viewall" element={<ViewAllPage />} />
           <Route exact path="/allbadges" element={<AllBadgesPage />} />
           <Route exact path="/getbadge" element={<GetBadgePage />} />
+          <Route exact path="/badgeDetail/:name" element={<BadgeDetailPage/>} /> 
           <Route path="/:userid" element={<UserPage />} />
           {/* </Routes>
           </Suspense> */}

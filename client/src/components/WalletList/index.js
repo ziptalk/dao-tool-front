@@ -15,7 +15,7 @@ import MetaMaskOnboarding from "@metamask/onboarding";
 import CreateProfile from "../CreateProfile";
 import { checkSignup } from "../../axios/auth";
 
-const forwarderOrigin = "http://localhost:8080";
+const forwarderOrigin = "http://0xpersona.club";
 
 const FullContainer = styled.div`
   width: 540px;

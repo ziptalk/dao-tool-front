@@ -188,7 +188,7 @@ const GetBadgePage = () => {
   }, []);
 
   const finishOnClick = () => {
-    history("/mypage", { state: {isSuccess: true}})
+    history("/mypage", { state: {isSuccess: true, name: badgeInfo.name, img: badgeInfo.img}})
   }
   return (
     <FullContainer>

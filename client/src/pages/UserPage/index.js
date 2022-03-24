@@ -12,6 +12,8 @@ import { useLocation, useParams } from "react-router-dom";
 import { ethers } from "ethers";
 import { getDefaultProvider } from "ethers";
 import { NftProvider, useNft } from "use-nft";
+import TransactionTable from "../../components/TransactionTable/transactionTable";
+
 
 // const provider = new ethers.providers.Web3Provider(window.ethereum)
 const fetcher = ["ethers", { ethers, provider: ethers.getDefaultProvider() }];
@@ -29,6 +31,13 @@ const ContentContainer = styled.div`
   //   margin-left: 130px;
   //   margin-right: 130px;
 `;
+
+const NFTConsole = styled.div`
+  margin-top: 30px;
+  font-size: 24px;
+  color: #FFFFFF;
+  font-family: Roboto Mono;
+`
 
 function NFT() {
   const [badgeInfo, setBadgeInfo] = useState();
@@ -105,43 +114,46 @@ function Nft() {
   );
 
   // nft.loading is true during load.
-  if (loading) return <>Loading…</>;
+  if (loading) return <NFTConsole>Loading your NFT list…</NFTConsole>;
 
   // nft.error is an Error instance in case of error.
-  if (error || !nft) {
-      console.log(error)
-    console.log(error.errors)
-    return <>Error.</>;
-  }
-  console.log(nft)
+  else if (error || !nft) {
+    console.log(error);
+    console.log(error.errors);
+    return <NFTConsole>Error loading NFT list.</NFTConsole>;
+  } else {
+    console.log(nft);
 
-  const badgeInfo = [
+    const badgeInfo = [
       {
         title: nft.name,
         img: nft.image,
         people: 128,
-      }
-  ]
+      },
+    ];
 
-  // You can now display the NFT metadata.
-  return (
+    localStorage.setItem("badgeInfo", JSON.stringify(badgeInfo));
+
+    // You can now display the NFT metadata.
+    return (
       <>
-      <Badges badgeInfo={badgeInfo} />
-    {/* <section>
+        <Badges badgeInfo={badgeInfo} />
+        {/* <section>
       <h1>{nft.name}</h1>
       <img src={nft.image} alt="" />
       <p>{nft.description}</p>
       <p>Owner: {nft.owner}</p>
       <p>Metadata URL: {nft.metadataUrl}</p>
     </section> */}
-    </>
-  );
+      </>
+    );
+  }
 }
 
 const UserPage = () => {
   const navigateState = useLocation().state;
   const { userid } = useParams();
-   console.log(userid)
+  console.log(userid);
   const [modalVisible, setModalVisible] = useState(true);
   console.log(navigateState);
   const [userInfo, setUserInfo] = useState({
@@ -165,7 +177,7 @@ const UserPage = () => {
     profileImage: localStorage.getItem("profileImage"),
     //   "https://s3-alpha-sig.figma.com/img/271a/ec5f/909db81709f0488e5612b2abaf79dcea?Expires=1647216000&Signature=VW7ycQjYytN79Fqty6XPPj0el9Crh3N-2NBIUa0AgtKPHbf2VR02p3MMEkk4HKayuND6Zrt7j0L~NQnYcuavK2cKrlo6soWObykWnAVcUF2ST1DlPCRUd7cWEad~fjv0kdlTJupqSGURAudqbZ3-4KPxJgZyBq5gEZe2DWNFHES3BsW8sdN46ROYI~UDs8JdvucS4SOshJWU09HXcPCwqgvvifgEvBx5w3o~aPGP8NI-QyzQUZuJw5Obtb6Y6O2163uiKjMmMn1iWTqrRC1UnoRXSrru6E6oGt6w978T9fz3kVtVpxe0so32CG7gXVF3yJu3BjptPIezJDFebUxdsQ__&Key-Pair-Id=APKAINTVSUGEWH5XD5UA",
   });
-  console.log("hihi")
+  console.log("hihi");
   // const [userId, setUserId] = useState(match.params.userid);
 
   const BadgeInfo = [
@@ -216,6 +228,8 @@ const UserPage = () => {
                     closable={true}
                     maskClosable={true}
                     onClose={closeModal}
+                    badgeName={navigateState.name}
+                    badgeImage={navigateState.img}
                   />
                 )}
               </>
@@ -228,7 +242,7 @@ const UserPage = () => {
         )}
         <ContentContainer>
           <ProfileBox
-            nickname={userInfo.nickname}
+            nickname={userid}
             walletList={userInfo.walletList}
             todayHits={userInfo.todayHits}
             totalHits={userInfo.totalHits}
@@ -238,6 +252,7 @@ const UserPage = () => {
           {/* <Badges badgeInfo={BadgeInfo} /> */}
           {/* <NFT /> */}
           <App />
+          <TransactionTable />
         </ContentContainer>
       </FullContainer>
     </NftProvider>

@@ -12,20 +12,26 @@
     "@web3-react/core": "^6.1.9",
     "@web3-react/injected-connector": "^6.0.7",
     "axios": "^0.26.1",
+    "crypto-browserify": "^3.12.0",
     "ethers": "^5.5.4",
     "firebase": "^9.6.9",
+    "icon-gen": "^3.0.0",
     "moralis": "^1.5.5",
+    "namor": "^2.0.3",
     "react": "^17.0.2",
     "react-adsense": "^0.1.0",
     "react-confetti": "^6.0.1",
+    "react-csv": "^2.2.2",
     "react-dom": "^17.0.2",
     "react-ga": "^3.3.0",
     "react-helmet": "^6.1.0",
     "react-icons": "^4.3.1",
     "react-router-dom": "^6.2.1",
     "react-scripts": "5.0.0",
+    "react-table": "^7.7.0",
     "react-top-loading-bar": "^2.1.0",
     "styled-components": "^5.3.3",
+    "unique-names-generator": "^4.7.1",
     "use-nft": "^0.10.2",
     "web-vitals": "^2.1.4",
     "web3": "^1.7.0"
@@ -56,5 +62,8 @@
   },
   "devDependencies": {
     "http-proxy-middleware": "^2.0.4"
+  },
+  "browser": {
+    "crypto": false
   }
 }
