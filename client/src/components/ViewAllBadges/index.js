@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import Palette from "../../constants/palette";
 import { MdPeopleOutline } from "react-icons/md";
+import { useLocation } from 'react-router-dom';
 
 const BadgesContainer = styled.div`
   margin-top: 39px;
@@ -16,11 +17,10 @@ const TitleBox = styled.div`
 
 const BadgesTitle = styled.div`
   font-family: NeoDunggeunmo Pro;
-  color: #FFFFFF;
+  color: #ffffff;
   font-size: 32px;
   margin-bottom: 80px;
 `;
-
 
 const BadgeGroup = styled.div`
   width: 100%;
@@ -33,7 +33,7 @@ const OneBadge = styled.div``;
 const JoinedAtText = styled.div`
   width: 100%;
   text-align: center;
-  color: #C4C4C4;
+  color: #c4c4c4;
   font-family: Roboto Mono;
   font-size: 12px;
   margin-top: 15px;
@@ -71,15 +71,20 @@ const PeopleNum = styled.span`
   margin-top: -10px;
 `;
 
-const Badges = ({ badgeInfo }) => {
-  const [userName, setUserName] = useState(localStorage.getItem("nickname"))
+const Badges = ({ badgeInfo, userid }) => {
+  const navigateState = useLocation().state;
+  const [userName, setUserName] = useState(navigateState.userid);
   const viewallOnClick = () => {
     window.location.href = "/viewall";
   };
   return (
     <BadgesContainer>
       <TitleBox>
-        <BadgesTitle>View All {userName}'s Badges</BadgesTitle>
+        <BadgesTitle>
+          View All{" "}
+          <>{userName.slice(-1) == "s" ? <>{userName}'</> : <>{userName}'s</>}</>{" "}
+          Collection
+        </BadgesTitle>
       </TitleBox>
       <BadgeGroup>
         {badgeInfo.map((item, index) => (

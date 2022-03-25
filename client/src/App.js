@@ -11,7 +11,7 @@ import {
 import { IntroPage, MyPage, ViewAllPage, AllBadgesPage, GetBadgePage, UserPage, BadgeDetailPage } from "./pages";
 import { Helmet } from "react-helmet";
 import ReactGA from "react-ga";
-import favicon from "./assets/images/favicon.ico";
+import favicon from "./assets/images/personaEarth.ico";
 import AdSense from "react-adsense";
 
 // import logo from './logo.svg';
@@ -33,7 +33,7 @@ function App() {
   return (
     <>
       <Helmet>
-        <title>다오툴</title>
+        <title>0xPERSONA</title>
         <link rel="icon" href={favicon} />
         {/* <AdSense.Google
           client="ca-pub-3891344306400800"

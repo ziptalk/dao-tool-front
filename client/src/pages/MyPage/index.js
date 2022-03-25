@@ -94,17 +94,18 @@ const ethersConfig = {
 // const fetcher = ["ethereum", { ethereum }]
 
 // Wrap your app with <NftProvider />.
-function App() {
+function App({userid}) {
+  console.log(userid)
   return (
     <NftProvider fetcher={["ethers", ethersConfig]}>
-      <Nft />
+      <Nft userid={userid}/>
     </NftProvider>
   );
 }
 
 // useNft() is now ready to be used in your app. Pass
 // the NFT contract and token ID to fetch the metadata.
-function Nft() {
+function Nft({userid}) {
   const { loading, error, nft } = useNft(
     // "0xd07dc4262bcdbf85190c01c996b4c06a461d2430",
     // "90473"
@@ -137,7 +138,7 @@ function Nft() {
     // You can now display the NFT metadata.
     return (
       <>
-        <Badges badgeInfo={badgeInfo} />
+        <Badges badgeInfo={badgeInfo} userid={userid}/>
         {/* <section>
       <h1>{nft.name}</h1>
       <img src={nft.image} alt="" />
@@ -184,6 +185,8 @@ const MyPage = () => {
   const closeModal = () => {
     setModalVisible(false);
   };
+
+  console.log(localStorage.getItem("nickname"))
 
   return (
     <NftProvider fetcher={fetcher}>
@@ -233,10 +236,11 @@ const MyPage = () => {
             totalHits={userInfo.totalHits}
             introduce={userInfo.introduce}
             profileImage={userInfo.profileImage}
+            editBool={true}
           />
           {/* <Badges badgeInfo={BadgeInfo} /> */}
           {/* <NFT /> */}
-          <App />
+          <App userid={localStorage.getItem("nickname")}/>
           <TransactionTable />
         </ContentContainer>
       </FullContainer>

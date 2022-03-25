@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import Palette from "../../constants/palette";
-import Logo from "../../assets/images/DAOLOGO.png";
+import Logo from "../../assets/images/PERSONALOGO.png";
 import LoadingBar from "react-top-loading-bar";
 import { WalletList } from "../../components";
 
@@ -16,7 +16,7 @@ const ParentContainer = styled.div`
 `;
 
 const LogoImage = styled.img`
-  width: 440px;
+  width: 735px;
   position: absolute;
 `;
 

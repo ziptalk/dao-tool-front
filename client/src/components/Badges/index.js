@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import Palette from "../../constants/palette";
 import { MdPeopleOutline } from "react-icons/md";
+import { renderMatches, useNavigate } from "react-router-dom";
 
 const BadgesContainer = styled.div`
   margin-top: 39px;
@@ -66,14 +67,20 @@ const PeopleNum = styled.span`
   margin-top: -10px;
 `;
 
-const Badges = ({ badgeInfo }) => {
+const Badges = ({ badgeInfo , userid }) => {
+  const history = useNavigate();
   const viewallOnClick = () => {
-    window.location.href = "/viewall";
+    // window.location.href = "/viewall";
+    console.log(userid)
+    history("/viewall", {state: {userid: userid}})
   };
+
+  console.log("badges")
+  console.log(userid)
   return (
     <BadgesContainer>
       <TitleBox>
-        <BadgesTitle>Badges</BadgesTitle>
+        <BadgesTitle>Collection</BadgesTitle>
         <ViewAllButton onClick={viewallOnClick}>view all</ViewAllButton>
       </TitleBox>
       <BadgeGroup>

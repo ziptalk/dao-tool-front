@@ -94,17 +94,17 @@ const ethersConfig = {
 // const fetcher = ["ethereum", { ethereum }]
 
 // Wrap your app with <NftProvider />.
-function App() {
+function App({userid}) {
   return (
     <NftProvider fetcher={["ethers", ethersConfig]}>
-      <Nft />
+      <Nft userid={userid}/>
     </NftProvider>
   );
 }
 
 // useNft() is now ready to be used in your app. Pass
 // the NFT contract and token ID to fetch the metadata.
-function Nft() {
+function Nft({userid}) {
   const { loading, error, nft } = useNft(
     // "0xd07dc4262bcdbf85190c01c996b4c06a461d2430",
     // "90473"
@@ -137,7 +137,7 @@ function Nft() {
     // You can now display the NFT metadata.
     return (
       <>
-        <Badges badgeInfo={badgeInfo} />
+        <Badges badgeInfo={badgeInfo} userid={userid} />
         {/* <section>
       <h1>{nft.name}</h1>
       <img src={nft.image} alt="" />
@@ -162,12 +162,12 @@ const UserPage = () => {
       {
         walletName: "First Ethereum",
         walletAddress: localStorage.getItem("currentWalletAddress"),
-        icon: "https://daotool.s3.ap-northeast-2.amazonaws.com/static/wallet-icon/4fd1f1fe-5869-43c9-a2bf-cdee14c0e4c38.png",
+        walletIcon: "https://daotool.s3.ap-northeast-2.amazonaws.com/static/wallet-icon/4fd1f1fe-5869-43c9-a2bf-cdee14c0e4c38.png",
       },
       {
         walletName: "Second Ethereum",
         walletAddress: localStorage.getItem("currentWalletAddress"),
-        icon: "https://daotool.s3.ap-northeast-2.amazonaws.com/static/wallet-icon/b9f9b71e-c620-4ccb-b972-63a0bd5bd70c7.png",
+        walletIcon: "https://daotool.s3.ap-northeast-2.amazonaws.com/static/wallet-icon/b9f9b71e-c620-4ccb-b972-63a0bd5bd70c7.png",
       },
     ],
     // introduce: "Hi, I'm block chain developer. I'm a member of Namu DAO.",
@@ -248,10 +248,11 @@ const UserPage = () => {
             totalHits={userInfo.totalHits}
             introduce={userInfo.introduce}
             profileImage={userInfo.profileImage}
+            editBool={false}
           />
           {/* <Badges badgeInfo={BadgeInfo} /> */}
           {/* <NFT /> */}
-          <App />
+          <App userid={userid}/>
           <TransactionTable />
         </ContentContainer>
       </FullContainer>

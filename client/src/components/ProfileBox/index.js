@@ -212,6 +212,7 @@ const ProfileBox = ({
   totalHits,
   introduce,
   profileImage,
+  editBool,
 }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [editProfile, setEditProfile] = useState(false);
@@ -244,9 +245,13 @@ const ProfileBox = ({
   return (
     <BoxContainer>
       <TopButtonContainer>
-        <EditProfileButton onClick={editProfileOnClick}>
-          Edit Profile
-        </EditProfileButton>
+        {editBool ? (
+          <EditProfileButton onClick={editProfileOnClick}>
+            Edit Profile
+          </EditProfileButton>
+        ) : (
+          <></>
+        )}
         <HitsBox>
           <HitsTitle>hits</HitsTitle>
           <HitsNumber>
@@ -260,50 +265,72 @@ const ProfileBox = ({
         <UpperInfo>
           <NickNameContainer>
             <NickNameText>{nickname}</NickNameText>
-            <CopyIcon onClick={()=>handleCopyClipBoard(`https://0xpersona.xyz/${nickname}`)}>
+            <CopyIcon
+              onClick={() =>
+                handleCopyClipBoard(`https://0xpersona.xyz/${nickname}`)
+              }
+            >
               <ImLink />
             </CopyIcon>
           </NickNameContainer>
           <LowerInfo>
-            <WalletListDropBox onClick={()=>setWalletDropboxOpen(!walletDropboxOpen)}>
+            <WalletListDropBox
+              onClick={() => setWalletDropboxOpen(!walletDropboxOpen)}
+            >
               <WalletListFrontText>
                 <WalletIcon src={walletList[selectedWalletIndex].walletIcon} />
-                <WalletName>{walletList[selectedWalletIndex].walletName}</WalletName>
+                <WalletName>
+                  {walletList[selectedWalletIndex].walletName}
+                </WalletName>
                 <WalletDivideLine />
-                <WalletAddress>{walletList[selectedWalletIndex].walletAddress}</WalletAddress>
+                <WalletAddress>
+                  {walletList[selectedWalletIndex].walletAddress}
+                </WalletAddress>
               </WalletListFrontText>
               <DropDownIcon>
                 <RiArrowDownSFill />
               </DropDownIcon>
-              {walletDropboxOpen?
-              <WalletListDropBoxContainer>
-                {walletList.map((item, index) => (
-                  <>
-                    {selectedWalletIndex == index ? (
-                      <WalletAddressOne
-                        style={{
-                          backgroundColor: "#222222",
-                          color: "#FFFFFF",
-                        }}
-                      >
-                        {item.walletAddress}
-                      </WalletAddressOne>
-                    ) : (
-                      <WalletAddressOne
-                        onClick={() => {
-                          setSelectedWalletIndex(index);
-                          localStorage.setItem("selectWalletAddress", walletList[index])
-                          setWalletDropboxOpen(false);
-                        }}
-                      >
-                        {item.walletAddress}
-                      </WalletAddressOne>
-                    )}
-                  </>
-                ))}
-              </WalletListDropBoxContainer>:<></>}
+              {walletDropboxOpen ? (
+                <WalletListDropBoxContainer>
+                  {walletList.map((item, index) => (
+                    <>
+                      {selectedWalletIndex == index ? (
+                        <WalletAddressOne
+                          style={{
+                            backgroundColor: "#222222",
+                            color: "#FFFFFF",
+                          }}
+                        >
+                          {item.walletAddress}
+                        </WalletAddressOne>
+                      ) : (
+                        <WalletAddressOne
+                          onClick={() => {
+                            setSelectedWalletIndex(index);
+                            localStorage.setItem(
+                              "selectWalletAddress",
+                              walletList[index]
+                            );
+                            setWalletDropboxOpen(false);
+                          }}
+                        >
+                          {item.walletAddress}
+                        </WalletAddressOne>
+                      )}
+                    </>
+                  ))}
+                </WalletListDropBoxContainer>
+              ) : (
+                <></>
+              )}
             </WalletListDropBox>
-            <CopyIcon onClick={()=>handleCopyClipBoard(walletList[selectedWalletIndex].walletAddress)}>
+            <CopyIcon
+              onClick={() =>
+                handleCopyClipBoard(
+                  walletList[selectedWalletIndex].walletAddress
+                )
+              }
+            >
               <RiFileCopyLine />
             </CopyIcon>
           </LowerInfo>
