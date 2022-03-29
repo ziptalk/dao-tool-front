@@ -231,7 +231,7 @@ const ProfileBox = ({
     setModalVisible(false);
   };
 
-  const handleCopyClipBoard = async (text) => {
+  const handleCopyClipBoard = async (text, caseName) => {
     var textarea = document.createElement("textarea");
     textarea.value = text; // 복사할 메시지
     document.body.appendChild(textarea);
@@ -239,7 +239,12 @@ const ProfileBox = ({
     textarea.setSelectionRange(0, 9999); // For IOS
     document.execCommand("copy");
     document.body.removeChild(textarea);
-    alert("링크 복사 완료!");
+    if(caseName == "link"){
+      alert("profile link copied to clipboard")
+    }else if(caseName == "address"){
+      alert("wallet address copied to clipboard")
+    }
+    // alert("링크 복사 완료!");
   };
 
   return (
@@ -267,7 +272,7 @@ const ProfileBox = ({
             <NickNameText>{nickname}</NickNameText>
             <CopyIcon
               onClick={() =>
-                handleCopyClipBoard(`https://0xpersona.xyz/${nickname}`)
+                handleCopyClipBoard(`https://0xpersona.xyz/${nickname}`, 'link')
               }
             >
               <ImLink />
@@ -327,7 +332,7 @@ const ProfileBox = ({
             <CopyIcon
               onClick={() =>
                 handleCopyClipBoard(
-                  walletList[selectedWalletIndex].walletAddress
+                  walletList[selectedWalletIndex].walletAddress, 'address'
                 )
               }
             >

@@ -7,6 +7,7 @@ import { BsCheckLg, BsTrash } from "react-icons/bs";
 import { IconList } from "./iconList";
 import { signup, login } from "../../axios/auth";
 import { renderMatches, useNavigate } from "react-router-dom";
+import DefaultProfileImage from "../../assets/images/defaultProfile.svg";
 
 const forwarderOrigin = "http://0xpersona.club";
 
@@ -345,11 +346,15 @@ const CreateProfile = ({ address }) => {
     localStorage.setItem("introduce", introductionValue);
     localStorage.setItem("currentWalletName", walletNameValue);
     localStorage.setItem("currentWalletIcon", WalletIcon);
-    localStorage.setItem("profileImage", profileImage.imagePreviewUrl);
-    localStorage.setItem("myWalletList", JSON.stringify(addressList))
+    if (profileImage) {
+      localStorage.setItem("profileImage", profileImage.imagePreviewUrl);
+    } else {
+      localStorage.setItem("profileImage", DefaultProfileImage);
+    }
+    localStorage.setItem("myWalletList", JSON.stringify(addressList));
 
     const formData = new FormData();
-    if (profileImage !== null) {
+    if (profileImage) {
       formData.append("imageFile", profileImage.file[0]);
 
       console.log("formdata check");
@@ -380,11 +385,11 @@ const CreateProfile = ({ address }) => {
       //   })
       //   .catch(() => {});
 
-      history("/mypage", { state: { isWelcome: true } }); // 이건 api 연결 안됐을 때 임시로
-
       //body에 formData 담아서 보내기
     } else {
     }
+
+    history("/mypage", { state: { isWelcome: true } }); // 이건 api 연결 안됐을 때 임시로
 
     // window.location.href = "/mypage"
   };
