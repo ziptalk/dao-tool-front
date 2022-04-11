@@ -10,7 +10,7 @@ import TmpIcon from "./xDAI.png";
 import { IoWallet } from "react-icons/io5";
 import { GrDownload } from "react-icons/gr";
 import MembersTable from "./memberTable";
-import { getAllBadges } from "../../axios/badges";
+import { getBadgeDetail } from "../../axios/badges";
 
 const FullContainer = styled.div`
   min-width: 1440px;
@@ -184,6 +184,9 @@ const BadgeDetailPage = () => {
     // console.log(tmpBadgeInfo.data.result);
 
     // const tmpInfo = tmpBadgeInfo.data.result;
+    const getBadgeDetailResult = await getBadgeDetail(name);
+    console.log("here!!")
+    console.log(getBadgeDetailResult)
     const tmpInfo = [
       {
         name: "DAO_ON_Welcome_badge",

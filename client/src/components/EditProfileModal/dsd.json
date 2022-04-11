@@ -1,0 +1,21 @@
+{
+  "userToken": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ6b296b29fY2x1YiIsImV4cCI6MTY0OTcwNDUzN30.Vgl3q6a_tMuF4WLU5aXJqJAO4eIhPn2oXwwj7tZUvzo",
+  "userInfo": {
+    "preId": "zoozoo_club",
+    "changedId": "zoozoo_club",
+    "introduction": "Hey!!",
+    "url": "https://0xpersona/zoozoo_club"
+  },
+  "wallets": [
+    {
+      "walletAddIndex": 0,
+      "walletIndex": -1,
+      "walletName": "zzz",
+      "walletIcon": "https://daotool.s3.ap-northeast-2.amazonaws.com/static/wallet-icon/4810d696-d9fb-4dac-a56c-a4b84ffa8aed2.png",
+      "walletChain": "Solana",
+      "walletAddress": "zzzz",
+      "walletType": "Metamask",
+      "request": "add"
+    }
+  ]
+}

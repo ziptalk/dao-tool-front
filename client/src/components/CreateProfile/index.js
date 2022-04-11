@@ -9,7 +9,7 @@ import { signup, login } from "../../axios/auth";
 import { renderMatches, useNavigate } from "react-router-dom";
 import DefaultProfileImage from "../../assets/images/defaultProfile.svg";
 
-const forwarderOrigin = "http://0xpersona.club";
+const forwarderOrigin = "https://api.0xpersona.club";
 
 const FullContainer = styled.div`
   width: 540px;
@@ -299,6 +299,7 @@ const CreateProfile = ({ address }) => {
     {
       walletName: "Metamask Wallet",
       walletIcon: IconList[1].iconImg,
+      walletChain: IconList[1].iconName,
       walletAddress: address,
       loginAvailable: 0,
       viewDataAvailable: 1,
@@ -306,6 +307,7 @@ const CreateProfile = ({ address }) => {
     {
       walletName: "Solana Wallet",
       walletIcon: IconList[1].iconImg,
+      walletChain: IconList[1].iconName,
       walletAddress: address,
       loginAvailable: 0,
       viewDataAvailable: 1,
@@ -331,7 +333,9 @@ const CreateProfile = ({ address }) => {
     tmpAddressList.push({
       walletName: "",
       walletIcon: IconList[1].iconImg,
+      walletChain: IconList[1].iconName,
       walletAddress: "",
+      walletType: "Metamask",
       loginAvailable: 0,
       viewDataAvailable: 1,
     });
@@ -351,7 +355,7 @@ const CreateProfile = ({ address }) => {
     } else {
       localStorage.setItem("profileImage", DefaultProfileImage);
     }
-    localStorage.setItem("myWalletList", JSON.stringify(addressList));
+    // localStorage.setItem("myWalletList", JSON.stringify(addressList));
 
     const formData = new FormData();
     if (profileImage) {
@@ -369,21 +373,23 @@ const CreateProfile = ({ address }) => {
         url: `https://www.daoon.com/${userName}`,
       };
 
-      // const signupResult = await signup({
-      //   userInfo: userInfoValue,
-      //   wallet: addressList,
-      // })
-      //   .then(async (data) => {
-      //     if (data) {
-      //       console.log("hi!")
-      //       console.log(data)
-      //       const loginResult = await login(address).then(() => {
-      //         history("/mypage", { state: { isWelcome: true } });
-      //       });
-      //       console.log(loginResult);
-      //     }
-      //   })
-      //   .catch(() => {});
+      const signupResult = await signup({
+        userInfo: userInfoValue,
+        wallet: addressList,
+      })
+        .then(async (data) => {
+          if (data) {
+            console.log("hi!");
+            console.log(data);
+            const loginResult = await login(address).then((data2) => {
+              console.log(data2)
+              localStorage.setItem("token", data2.data.result.token)
+              history("/mypage", { state: { isWelcome: true } });
+            });
+            console.log(loginResult);
+          }
+        })
+        .catch(() => {});
 
       //body에 formData 담아서 보내기
     } else {
@@ -423,8 +429,10 @@ const CreateProfile = ({ address }) => {
     console.log(walletIndex);
     let tmpValue = {
       walletName: walletNameValue,
+      walletChain: IconList[iconIndex].iconName,
       walletIcon: IconList[iconIndex].iconImg,
       walletAddress: walletAddressValue,
+      walletType: "Metamask",
       loginAvailable: 0,
       viewDataAvailable: 1,
     };
@@ -508,7 +516,9 @@ const CreateProfile = ({ address }) => {
                               walletName: walletNameValue,
                               walletIcon:
                                 tmpWalletList[editWalletId].walletIcon,
+                              walletChain: tmpWalletList[editWalletId].walletChain,
                               walletAddress: walletAddressValue,
+                              walletType: "Metamask",
                               loginAvailable: 0,
                               viewDataAvailable: 1,
                             };

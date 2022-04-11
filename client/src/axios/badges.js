@@ -27,3 +27,31 @@ export const getAllBadges = async (order) => {
   
     return returnValue;
   };
+
+
+  export const getBadgeDetail = async (badgeName) => {
+    var returnValue = {}
+
+    const result = await axios
+      .get(
+        `/badges/?badgeName=${badgeName}`,
+        // { params: { badgeName: badgeName } },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      )
+      .then((data) => {
+        console.log(data);
+        returnValue = data;
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  
+    console.log("check");
+    console.log(result);
+  
+    return returnValue;
+  };

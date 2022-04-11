@@ -219,6 +219,9 @@ const ProfileBox = ({
   const [selectedWalletIndex, setSelectedWalletIndex] = useState(0);
   const [walletDropboxOpen, setWalletDropboxOpen] = useState(false);
 
+  console.log("check wallet List")
+  console.log(walletList)
+
   const editProfileOnClick = () => {
     setModalVisible(true);
     setEditProfile(true);
@@ -283,13 +286,13 @@ const ProfileBox = ({
               onClick={() => setWalletDropboxOpen(!walletDropboxOpen)}
             >
               <WalletListFrontText>
-                <WalletIcon src={walletList[selectedWalletIndex].walletIcon} />
+                <WalletIcon src={walletList[selectedWalletIndex].chain.image} />
                 <WalletName>
                   {walletList[selectedWalletIndex].walletName}
                 </WalletName>
                 <WalletDivideLine />
                 <WalletAddress>
-                  {walletList[selectedWalletIndex].walletAddress}
+                  {walletList[selectedWalletIndex].walletAddress.address}
                 </WalletAddress>
               </WalletListFrontText>
               <DropDownIcon>
@@ -306,7 +309,7 @@ const ProfileBox = ({
                             color: "#FFFFFF",
                           }}
                         >
-                          {item.walletAddress}
+                          {item.walletAddress.address}
                         </WalletAddressOne>
                       ) : (
                         <WalletAddressOne
@@ -319,7 +322,7 @@ const ProfileBox = ({
                             setWalletDropboxOpen(false);
                           }}
                         >
-                          {item.walletAddress}
+                          {item.walletAddress.address}
                         </WalletAddressOne>
                       )}
                     </>
@@ -332,7 +335,7 @@ const ProfileBox = ({
             <CopyIcon
               onClick={() =>
                 handleCopyClipBoard(
-                  walletList[selectedWalletIndex].walletAddress, 'address'
+                  walletList[selectedWalletIndex].walletAddress.address, 'address'
                 )
               }
             >

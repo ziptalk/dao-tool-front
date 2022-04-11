@@ -13,6 +13,7 @@ import { ethers } from "ethers";
 import { getDefaultProvider } from "ethers";
 import { NftProvider, useNft } from "use-nft";
 import TransactionTable from "../../components/TransactionTable/transactionTable";
+import { getUserpage } from "../../axios/auth";
 
 // const provider = new ethers.providers.Web3Provider(window.ethereum)
 const fetcher = ["ethers", { ethers, provider: ethers.getDefaultProvider() }];
@@ -34,10 +35,9 @@ const ContentContainer = styled.div`
 const NFTConsole = styled.div`
   margin-top: 30px;
   font-size: 24px;
-  color: #FFFFFF;
+  color: #ffffff;
   font-family: Roboto Mono;
-`
-
+`;
 
 function NFT() {
   const [badgeInfo, setBadgeInfo] = useState();
@@ -94,18 +94,18 @@ const ethersConfig = {
 // const fetcher = ["ethereum", { ethereum }]
 
 // Wrap your app with <NftProvider />.
-function App({userid}) {
-  console.log(userid)
+function App({ userid }) {
+  console.log(userid);
   return (
     <NftProvider fetcher={["ethers", ethersConfig]}>
-      <Nft userid={userid}/>
+      <Nft userid={userid} />
     </NftProvider>
   );
 }
 
 // useNft() is now ready to be used in your app. Pass
 // the NFT contract and token ID to fetch the metadata.
-function Nft({userid}) {
+function Nft({ userid }) {
   const { loading, error, nft } = useNft(
     // "0xd07dc4262bcdbf85190c01c996b4c06a461d2430",
     // "90473"
@@ -116,7 +116,6 @@ function Nft({userid}) {
 
   // nft.loading is true during load.
   if (loading) return <NFTConsole>Loading your NFT list…</NFTConsole>;
-
   // nft.error is an Error instance in case of error.
   else if (error || !nft) {
     console.log(error);
@@ -138,7 +137,7 @@ function Nft({userid}) {
     // You can now display the NFT metadata.
     return (
       <>
-        <Badges badgeInfo={badgeInfo} userid={userid}/>
+        <Badges badgeInfo={badgeInfo} userid={userid} />
         {/* <section>
       <h1>{nft.name}</h1>
       <img src={nft.image} alt="" />
@@ -156,15 +155,32 @@ const MyPage = () => {
   const [modalVisible, setModalVisible] = useState(true);
   console.log(navigateState);
   const [userInfo, setUserInfo] = useState({
-    nickname: localStorage.getItem("nickname"),
-    walletList: JSON.parse(localStorage.getItem("myWalletList")),
+    // nickname: localStorage.getItem("nickname"),
+    // walletList: JSON.parse(localStorage.getItem("myWalletList")),
     // introduce: "Hi, I'm block chain developer. I'm a member of Namu DAO.",
-    introduce: localStorage.getItem("introduce"),
-    todayHits: 211,
-    totalHits: 34052,
-    profileImage: localStorage.getItem("profileImage"),
+    // introduce: localStorage.getItem("introduce"),
+    // todayHits: 211,
+    // totalHits: 34052,
+    // profileImage: localStorage.getItem("profileImage"),
     //   "https://s3-alpha-sig.figma.com/img/271a/ec5f/909db81709f0488e5612b2abaf79dcea?Expires=1647216000&Signature=VW7ycQjYytN79Fqty6XPPj0el9Crh3N-2NBIUa0AgtKPHbf2VR02p3MMEkk4HKayuND6Zrt7j0L~NQnYcuavK2cKrlo6soWObykWnAVcUF2ST1DlPCRUd7cWEad~fjv0kdlTJupqSGURAudqbZ3-4KPxJgZyBq5gEZe2DWNFHES3BsW8sdN46ROYI~UDs8JdvucS4SOshJWU09HXcPCwqgvvifgEvBx5w3o~aPGP8NI-QyzQUZuJw5Obtb6Y6O2163uiKjMmMn1iWTqrRC1UnoRXSrru6E6oGt6w978T9fz3kVtVpxe0so32CG7gXVF3yJu3BjptPIezJDFebUxdsQ__&Key-Pair-Id=APKAINTVSUGEWH5XD5UA",
   });
+
+  useEffect(async () => {
+    console.log(localStorage.getItem("nickname"));
+    const userInfoResult = await getUserpage(localStorage.getItem("nickname"));
+    if (userInfoResult.data.isSuccess == true) {
+      var dataResult = userInfoResult.data.result;
+      console.log(userInfoResult.data.result);
+      console.log("here");
+      localStorage.setItem("introduce", dataResult.user.introduction);
+      localStorage.setItem("currentWalletName", dataResult.wallets[0].walletName);
+      localStorage.setItem("currentWalletIcon", dataResult.wallets[0].chain.image);
+      localStorage.setItem("profileImage", dataResult.user.profileImage);
+      localStorage.setItem("myWalletList", JSON.stringify(dataResult.wallets));
+      setUserInfo(userInfoResult.data.result);
+    }
+    //result.badges, result.user, result.wallets
+  }, []);
 
   const BadgeInfo = [
     {
@@ -186,7 +202,7 @@ const MyPage = () => {
     setModalVisible(false);
   };
 
-  console.log(localStorage.getItem("nickname"))
+  console.log(localStorage.getItem("nickname"));
 
   return (
     <NftProvider fetcher={fetcher}>
@@ -229,18 +245,22 @@ const MyPage = () => {
           <></>
         )}
         <ContentContainer>
-          <ProfileBox
-            nickname={userInfo.nickname}
-            walletList={userInfo.walletList}
-            todayHits={userInfo.todayHits}
-            totalHits={userInfo.totalHits}
-            introduce={userInfo.introduce}
-            profileImage={userInfo.profileImage}
-            editBool={true}
-          />
+          {userInfo.user ? (
+            <ProfileBox
+              nickname={userInfo.user.id}
+              walletList={userInfo.wallets}
+              todayHits={userInfo.user.todayHits}
+              totalHits={userInfo.user.hits}
+              introduce={userInfo.user.introduction}
+              profileImage={userInfo.user.profileImage}
+              editBool={true}
+            />
+          ) : (
+            <></>
+          )}
           {/* <Badges badgeInfo={BadgeInfo} /> */}
           {/* <NFT /> */}
-          <App userid={localStorage.getItem("nickname")}/>
+          <App userid={localStorage.getItem("nickname")} />
           <TransactionTable />
         </ContentContainer>
       </FullContainer>

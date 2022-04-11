@@ -41,28 +41,28 @@ export const signup = async ({ userInfo, wallet }) => {
     .catch((error) => console.log(error));
   console.log(result4);
 
-  const result3 = await postAdminBadge(
-    "뱃지1",
-    JSON.stringify({
-      user: "test2",
-      srcWalletAddress: "지갑4",
-      dstWalletAddress: "지갑3",
-    })
-  )
-    .then((data) => {
-      console.log("adminBadge Success!");
-      console.log(data);
-    })
-    .catch((error) => console.log(error));
-  console.log(result3);
+  //   const result3 = await postAdminBadge(
+  //     "뱃지1",
+  //     JSON.stringify({
+  //       user: "test2",
+  //       srcWalletAddress: "지갑4",
+  //       dstWalletAddress: "지갑3",
+  //     })
+  //   )
+  //     .then((data) => {
+  //       console.log("adminBadge Success!");
+  //       console.log(data);
+  //     })
+  //     .catch((error) => console.log(error));
+  //   console.log(result3);
 
-  const result2 = await getUserpage("test1")
-    .then((data) => {
-      console.log("hello");
-      console.log(data);
-    })
-    .catch((error) => console.log(error));
-  console.log(result2);
+  //   const result2 = await getUserpage("test1")
+  //     .then((data) => {
+  //       console.log("hello");
+  //       console.log(data);
+  //     })
+  //     .catch((error) => console.log(error));
+  //   console.log(result2);
 
   console.log("이미지 확인");
   console.log(userInfo.profileImage);
@@ -111,7 +111,7 @@ export const signup = async ({ userInfo, wallet }) => {
   let signupReturn = {};
 
   const result6 = await createUser(formdata)
-    .then((data) => {
+    .then(async (data) => {
       console.log("createUser success!");
       console.log(data);
       if (data.isSuccess) {
@@ -121,83 +121,75 @@ export const signup = async ({ userInfo, wallet }) => {
             wallet: wallet,
           })
         );
-        async function createWalletFunc() {
-          const currentAddress = localStorage.getItem("currentWalletAddress");
-          console.log(currentAddress);
+        const currentAddress = localStorage.getItem("currentWalletAddress");
+        console.log(currentAddress);
 
-          console.log(
-            wallet.findIndex((x) => x.walletAddress == currentAddress)
-          );
+        console.log(wallet.findIndex((x) => x.walletAddress == currentAddress));
 
-          if (
-            wallet.findIndex((x) => x.walletAddress == currentAddress) != -1
-          ) {
-            let currentWalletObject = {
-              walletAddress: currentAddress,
-              walletName: "loginWallet01",
-              walletIcon:
-                "https://daotool.s3.ap-northeast-2.amazonaws.com/static/wallet-icon/4810d696-d9fb-4dac-a56c-a4b84ffa8aed2.png",
-              loginAvailable: 1,
-              viewDataAvailable: 1,
-            };
-            // wallet[wallet.findIndex((x)=> x.walletAddress === currentAddress)] = currentWalletObject
-            wallet[
-              wallet.findIndex((x) => x.walletAddress === currentAddress)
-            ].loginAvailable = 1;
-            console.log(wallet);
-          } else {
-            let currentWalletObject = {
-              walletAddress: currentAddress,
-              walletName: "loginWallet01",
-              walletIcon:
-                "https://daotool.s3.ap-northeast-2.amazonaws.com/static/wallet-icon/4810d696-d9fb-4dac-a56c-a4b84ffa8aed2.png",
-              loginAvailable: 1,
-              viewDataAvailable: 0,
-            };
-            wallet.unshift(currentWalletObject); // wallet 맨 앞 배열에 이거 추가
-            console.log(wallet);
-          }
+        if (wallet.findIndex((x) => x.walletAddress == currentAddress) != -1) {
+          let currentWalletObject = {
+            walletAddress: currentAddress,
+            walletName: "loginWallet01",
+            walletIcon:
+              "https://daotool.s3.ap-northeast-2.amazonaws.com/static/wallet-icon/4810d696-d9fb-4dac-a56c-a4b84ffa8aed2.png",
+            loginAvailable: 1,
+            viewDataAvailable: 1,
+          };
+          // wallet[wallet.findIndex((x)=> x.walletAddress === currentAddress)] = currentWalletObject
+          wallet[
+            wallet.findIndex((x) => x.walletAddress === currentAddress)
+          ].loginAvailable = 1;
+          console.log(wallet);
+        } else {
+          let currentWalletObject = {
+            walletAddress: currentAddress,
+            walletName: "loginWallet01",
+            walletIcon:
+              "https://daotool.s3.ap-northeast-2.amazonaws.com/static/wallet-icon/4810d696-d9fb-4dac-a56c-a4b84ffa8aed2.png",
+            loginAvailable: 1,
+            viewDataAvailable: 0,
+          };
+          wallet.unshift(currentWalletObject); // wallet 맨 앞 배열에 이거 추가
+          console.log(wallet);
+        }
 
-          const createWalletListResult = await createWalletList({
-            user: userInfo.id,
-            wallet: wallet,
-          })
-            .then((data2) => {
-              console.log("createWalletList success!");
-              console.log(data2);
-              if (data2 == 200) {
-                signupReturn = data2;
-              } else {
-                console.log(data2.message);
-                console.log(
-                  JSON.stringify({
-                    user: data.result.id,
-                    token: data.result.token,
-                  })
-                );
-                const deleteUserResult = deleteUser(
-                  JSON.stringify({
-                    user: data.result.id,
-                    token: data.result.token,
-                  })
-                ).then((data3) => {
-                  signupReturn = data3;
-                });
-                alert(data2.message);
-              }
-            })
-            .catch((error) => {
-              console.log(error);
-              const deleteUserResult = deleteUser(
+        const createWalletListResult = await createWalletList({
+          user: userInfo.id,
+          wallet: wallet,
+        })
+          .then((data2) => {
+            console.log("createWalletList success!");
+            console.log(data2);
+            if (data2 == 200) {
+              signupReturn = data2;
+            } else {
+              console.log(data2.message);
+              console.log(
                 JSON.stringify({
                   user: data.result.id,
                   token: data.result.token,
                 })
               );
-            });
-        }
-
-        createWalletFunc();
+              const deleteUserResult = deleteUser(
+                JSON.stringify({
+                  user: data.result.id,
+                  token: data.result.token,
+                })
+              ).then((data3) => {
+                signupReturn = data3;
+              });
+              alert(data2.message);
+            }
+          })
+          .catch((error) => {
+            console.log(error);
+            const deleteUserResult = deleteUser(
+              JSON.stringify({
+                user: data.result.id,
+                token: data.result.token,
+              })
+            );
+          });
       } else {
         console.log(data.message);
         alert(data.message);
@@ -225,8 +217,10 @@ export const login = async (walletAddress) => {
       //   data: JSON.stringify(walletAddress),
     })
     .then((data) => {
-      console.log(data.result.user.id);
-      alert(data.result.user.id);
+      console.log(data);
+      console.log(data.data.result.userID);
+      localStorage.setItem("nickname", data.data.result.userID)
+      alert(data.data.result.userID);
       returnValue = data;
     })
     .catch((error) => {
@@ -237,6 +231,7 @@ export const login = async (walletAddress) => {
 };
 
 export const getUserpage = async (userId) => {
+  var returnValue = {};
   const result = await axios
     .get(`/users/mypage?userId=${userId}`, {
       headers: {
@@ -246,17 +241,16 @@ export const getUserpage = async (userId) => {
     })
     .then((data) => {
       console.log(data);
-      return data;
+      returnValue = data;
     })
     .catch((error) => {
       console.log(error);
-      return error;
     });
 
   console.log("check");
-  console.log(result.data);
+  console.log(result);
 
-  return result.data;
+  return returnValue;
 };
 
 export const postAdminBadge = async (name, walletData) => {
@@ -421,6 +415,27 @@ export const deleteUser = async (userData) => {
 
   console.log("deleteUser done!");
   console.log(returnValue);
+
+  return returnValue;
+};
+
+export const editProfile = async (formData) => {
+  var requestOptions = {
+    method: "PATCH",
+    body: formData,
+    redirect: "follow",
+  };
+
+  let returnValue = {};
+
+  const result = await fetch("/users/mypage", requestOptions)
+    .then((response) => response.text())
+    .then((result) => {
+      console.log(result);
+      console.log("createUser End");
+      returnValue = JSON.parse(result);
+    })
+    .catch((error) => console.log("error", error));
 
   return returnValue;
 };

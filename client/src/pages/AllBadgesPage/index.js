@@ -32,34 +32,34 @@ const AllBadgesPage = () => {
   ];
 
   useEffect(async () => {
-    // const tmpBadgeInfo = await getAllBadges("oldest") // newest, oldest, members
+    const tmpBadgeInfo = await getAllBadges("oldest"); // newest, oldest, members
     // console.log(tmpBadgeInfo.data.result)
-    // setBadgeInfo(tmpBadgeInfo.data.result)
+    setBadgeInfo(tmpBadgeInfo.data.result)
 
-    const tmpBadgeInfo = [
-      {
-        name: "DAO_ON_Welcome_badge",
-        image:
-          "https://daotool.s3.ap-northeast-2.amazonaws.com/media/badge_img/6aeb8ebb-b56e-418b-88bd-c889f3f585bfFrame+98+(1).png",
-        createdAt: "2022-03-24T22:31:16.000+00:00",
-        joinedWalletCount: 0,
-      },
-      {
-        name: "FLEX_NFT_holder",
-        image:
-          "https://daotool.s3.ap-northeast-2.amazonaws.com/media/badge_img/8d077476-e78d-4752-ad21-b8b0e9844c8cimage+43.png",
-        createdAt: "2022-03-24T22:36:12.000+00:00",
-        joinedWalletCount: 0,
-      },
-    ];
+    // const tmpBadgeInfo = [
+    //   {
+    //     name: "DAO_ON_Welcome_badge",
+    //     image:
+    //       "https://daotool.s3.ap-northeast-2.amazonaws.com/media/badge_img/6aeb8ebb-b56e-418b-88bd-c889f3f585bfFrame+98+(1).png",
+    //     createdAt: "2022-03-24T22:31:16.000+00:00",
+    //     joinedWalletCount: 0,
+    //   },
+    //   {
+    //     name: "FLEX_NFT_holder",
+    //     image:
+    //       "https://daotool.s3.ap-northeast-2.amazonaws.com/media/badge_img/8d077476-e78d-4752-ad21-b8b0e9844c8cimage+43.png",
+    //     createdAt: "2022-03-24T22:36:12.000+00:00",
+    //     joinedWalletCount: 0,
+    //   },
+    // ];
 
-    setBadgeInfo(tmpBadgeInfo);
+    // setBadgeInfo(tmpBadgeInfo);
   }, []);
   return (
     <FullContainer>
       <Header />
       <ContentContainer>
-        <Badges badgeInfo={badgeInfo} />
+        {badgeInfo ? <Badges badgeInfo={badgeInfo} /> : <></>}
       </ContentContainer>
     </FullContainer>
   );

@@ -8,8 +8,9 @@ import { IconList } from "./iconList";
 import { signup, login } from "../../axios/auth";
 import { renderMatches, useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
+import { editProfile, getUserpage } from "../../axios/auth";
 
-const forwarderOrigin = "http://0xpersona.club";
+const forwarderOrigin = "https://api.0xpersona.club";
 
 const FullContainer = styled.div`
   width: 540px;
@@ -307,7 +308,17 @@ const EditProfile = ({
   const tmpList = JSON.parse(localStorage.getItem("myWalletList"));
   console.log(tmpList);
 
-  const [addressList, setAddressList] = useState(tmpList);
+  const myWalletFilter = tmpList.map((data) => ({
+    walletIndex: data.index,
+    walletName: data.walletName,
+    walletIcon: data.chain.image,
+    walletChain: data.chain.name,
+    walletAddress: data.walletAddress.address,
+    request: "",
+  }));
+  console.log(myWalletFilter);
+
+  const [addressList, setAddressList] = useState(myWalletFilter);
   const [profileImage, setProfileImage] = useState(
     localStorage.getItem("profileImage")
   );
@@ -323,74 +334,109 @@ const EditProfile = ({
   const [iconChangeClick, setIconChangeClick] = useState(false);
   const history = useNavigate();
   const [editProfileImage, setEditProfileImage] = useState(false);
+  const [sendWalletList, setSendWalletList] = useState([]);
+  const [currentRequest, setCurrentRequest] = useState("patch"); //add, patch, delete
+  const [addWalletIndex, setAddWalletIndex] = useState(0);
+  // const [userInfo, setUserInfo] = useState({});
+
+  // useEffect(async () => {
+  //   console.log(localStorage.getItem("nickname"));
+  //   const userInfoResult = await getUserpage(localStorage.getItem("nickname"));
+  //   if (userInfoResult.data.isSuccess == true) {
+  //     console.log(userInfoResult.data.result);
+  //     console.log("here");
+  //     setUserInfo(userInfoResult.data.result);
+  //   }
+  //   setUserInfo(userInfoResult.data.result);
+  //   setAddressList(getInfo.wallets);
+  //   setUserName(getInfo.user.id);
+  //   setIntroductionValue(getInfo.user.introduction);
+  //   setProfileImage(getInfo.user.profileImage);
+  //   //result.badges, result.user, result.wallets
+  // }, []);
 
   useEffect(() => {}, [addClick]);
 
   const addAddressButtonOnClick = () => {
     var tmpAddressList = addressList;
-    tmpAddressList.push({
+    var tmpSendWalletList = sendWalletList; // api로 보낼 지갑리스트(변경사항 있는 애들 array)
+    var pushData = {
+      walletAddIndex: addWalletIndex,
       walletName: "",
       walletIcon: IconList[1].iconImg,
+      walletChain: IconList[1].iconName,
       walletAddress: "",
-      loginAvailable: 0,
-      viewDataAvailable: 1,
-    });
+      walletType: "Metamask",
+      request: "add",
+    };
+    setAddWalletIndex(addWalletIndex+1);
+    tmpAddressList.push(pushData);
+    // tmpSendWalletList.push(pushData);
+    setCurrentRequest("add");
     console.log(tmpAddressList);
     setAddressList(tmpAddressList);
+    setSendWalletList(tmpSendWalletList);
     console.log(addressList);
     setAddClick(!addClick);
+    setEditWalletId(tmpAddressList.length - 1);
   };
 
   const submitButtonOnClick = async () => {
-    localStorage.setItem("nickname", userName);
+    // localStorage.setItem("nickname", userName);
     localStorage.setItem("introduce", introductionValue);
     localStorage.setItem("currentWalletName", walletNameValue);
     localStorage.setItem("currentWalletIcon", WalletIcon);
-    localStorage.setItem("myWalletList", JSON.stringify(addressList));
+    // localStorage.setItem("myWalletList", JSON.stringify(addressList));
 
     const formData = new FormData();
     if (editProfileImage) {
-      console.log(editProfileImage)
+      console.log(editProfileImage);
       formData.append("imageFile", profileImage.file[0]);
 
       console.log("formdata check");
       console.log(profileImage.file);
       console.log(formData);
 
-      const userInfoValue = {
-        id: userName,
-        profileImage: profileImage.file,
-        // profileImage: formData,
-        introduction: introductionValue,
-        url: `https://www.daoon.com/${userName}`,
-      };
-
       localStorage.setItem("profileImage", profileImage.imagePreviewUrl);
-
-      // const signupResult = await signup({
-      //   userInfo: userInfoValue,
-      //   wallet: addressList,
-      // })
-      //   .then(async (data) => {
-      //     if (data) {
-      //       console.log("hi!")
-      //       console.log(data)
-      //       const loginResult = await login(address).then(() => {
-      //         history("/mypage", { state: { isWelcome: true } });
-      //       });
-      //       console.log(loginResult);
-      //     }
-      //   })
-      //   .catch(() => {});
 
       // history("/mypage", { state: { isWelcome: false } }); // 이건 api 연결 안됐을 때 임시로
 
       //body에 formData 담아서 보내기
     } else {
     }
+    const userInfoValue = {
+      userToken: localStorage.getItem("token"),
+      userInfo: {
+        preId: localStorage.getItem("nickname"),
+        changedId: userName,
+        // profileImage: profileImage.file, 이거이거.
+        // profileImage: formData,
+        introduction: introductionValue,
+        url: `https://0xpersona/${userName}`,
+      },
+      wallets: sendWalletList,
+    };
+
+    var formdata = new FormData();
+    formdata.append("profileImageChanged", editProfileImage ? 1 : 0);
+    if (editProfileImage) {
+      formdata.append("newProfileImage", profileImage.imagePreviewUrl, "0.png");
+    } else {
+      formdata.append("newProfileImage", "");
+    }
+
+    console.log(formdata);
+
+    formdata.append("json", JSON.stringify(userInfoValue));
+    console.log(JSON.stringify(userInfoValue));
+
+    const editProfileResult = await editProfile(formdata);
+
+    localStorage.setItem("nickname", userName);
+
     onClose();
-    history("/mypage", { state: { isWelcome: false } });
-    window.location.href = "/mypage";
+    // history("/mypage", { state: { isWelcome: false } });
+    // window.location.href = "/mypage";
   };
 
   const hiddenFileInput = useRef(null);
@@ -413,7 +459,7 @@ const EditProfile = ({
       setProfileImage({ file: fileUploaded, imagePreviewUrl: reader.result });
     };
     reader.readAsDataURL(fileUploaded);
-    setEditProfileImage(true)
+    setEditProfileImage(true);
     // setProfileImage(fileUploaded)
     // props.handleFile(fileUploaded);
   };
@@ -421,14 +467,17 @@ const EditProfile = ({
   const IconButtonOnClick = (iconIndex, walletIndex) => {
     console.log(iconIndex);
     console.log(walletIndex);
+    let tmpWalletList = addressList;
     let tmpValue = {
+      walletAddIndex: tmpWalletList[walletIndex].walletAddIndex,
+      walletIndex: tmpWalletList[walletIndex].walletIndex,
       walletName: walletNameValue,
       walletIcon: IconList[iconIndex].iconImg,
+      walletChain: IconList[iconIndex].iconName,
       walletAddress: walletAddressValue,
-      loginAvailable: 0,
-      viewDataAvailable: 1,
+      request: "",
     };
-    let tmpWalletList = addressList;
+
     tmpWalletList[walletIndex] = tmpValue;
     setAddressList(tmpWalletList);
     setIconChangeClick(false);
@@ -537,20 +586,43 @@ const EditProfile = ({
                               <EditButton
                                 onClick={() => {
                                   let tmpWalletList = addressList;
+                                  let tmpSendWalletList = sendWalletList;
                                   let tmpValue = {
+                                    walletAddIndex:
+                                      tmpWalletList[editWalletId]
+                                        .walletAddIndex,
+                                    walletIndex:
+                                      currentRequest == "add"
+                                        ? -1
+                                        : tmpWalletList[editWalletId]
+                                            .walletIndex,
                                     walletName: walletNameValue,
                                     walletIcon:
                                       tmpWalletList[editWalletId].walletIcon,
+                                    walletChain:
+                                      tmpWalletList[editWalletId].walletChain,
                                     walletAddress: walletAddressValue,
-                                    loginAvailable: 0,
-                                    viewDataAvailable: 1,
+                                    walletType: "Metamask",
+                                    request: currentRequest,
                                   };
+                                  if(tmpWalletList[editWalletId].walletAddIndex >= 0 && currentRequest == "patch"){// 지금 세션에서 추가했다가 수정하는 애라면
+                                    let editIndex = tmpSendWalletList.findIndex((ele)=>ele.walletAddIndex == tmpWalletList[editWalletId].walletAddIndex && ele.request == "add");
+                                    tmpSendWalletList[editIndex].walletName = walletNameValue;
+                                    tmpSendWalletList[editIndex].walletAddress = walletAddressValue;
+                                    tmpSendWalletList[editIndex].walletIcon = tmpWalletList[editWalletId].walletIcon;
+                                    tmpSendWalletList[editIndex].walletChain = tmpWalletList[editWalletId].walletChain;
+                                    tmpSendWalletList[editIndex].request = "add";
+                                  }else{
+                                    tmpSendWalletList.push(tmpValue);
+                                  }
                                   tmpWalletList[editWalletId] = tmpValue;
                                   setAddressList(tmpWalletList);
+                                  setSendWalletList(tmpSendWalletList);
                                   setEditWalletId(-1);
                                   setWalletAddressValue("");
                                   setWalletNameValue("");
                                   setWalletIconValue("");
+                                  setCurrentRequest("patch");
                                 }}
                               >
                                 <BsCheckLg />
@@ -579,8 +651,32 @@ const EditProfile = ({
                               <DeleteButton
                                 onClick={() => {
                                   let tmpWalletList = addressList;
+                                  let tmpSendWalletList = sendWalletList;
+                                  let currentWallet = tmpWalletList[index];
+                                  if (currentWallet.walletIndex > 0) { // 이미 Db에 있는 애들
+                                    tmpSendWalletList.push({
+                                      walletAddIndex:
+                                        currentWallet.walletAddIndex,
+                                      walletIndex: currentWallet.walletIndex,
+                                      walletAddress:
+                                        currentWallet.walletAddress,
+                                      walletName: currentWallet.walletName,
+                                      walletType: currentWallet.walletType,
+                                      walletChain: currentWallet.walletChain,
+                                      request: "delete",
+                                    });
+                                  } else {
+                                    // const isDeleteElement = (ele) => ele.walletAddIndex == currentWallet.walletAddIndex;
+                                    // let indexes = tmpSendWalletList.map((ele, idx) => ele.walletAddIndex == currentWallet.walletAddIndex ? idx : '').filter(String);
+                                    // 삭제한 지갑의 addindex와 동일한 action들을 찾아 모조리 send 배열에서 지우기
+                                    tmpSendWalletList = tmpWalletList.filter(function(item) {
+                                      return item.walletAddIndex !== currentWallet.walletAddIndex;
+                                    })
+                                    // tmpSendWalletList.findIndex(isDeleteElement);
+                                  }
                                   tmpWalletList.splice(index, 1);
                                   setAddressList(tmpWalletList);
+                                  setSendWalletList(tmpSendWalletList);
                                   setEditWalletId(-1);
                                   setWalletAddressValue("");
                                   setWalletNameValue("");
@@ -602,6 +698,7 @@ const EditProfile = ({
                                 setWalletAddressValue(item.walletAddress);
                                 setWalletNameValue(item.walletName);
                                 setWalletIconValue(item.walletIcon);
+                                setCurrentRequest("patch");
                               }}
                             >
                               <RiPencilFill />

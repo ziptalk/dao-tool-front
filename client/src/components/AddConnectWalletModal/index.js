@@ -24,7 +24,7 @@ import MetaMaskOnboarding from "@metamask/onboarding";
 //import CloseButton from './CloseButton'
 // import ClosebtnIcon from "../images/common/close1.png"
 
-const forwarderOrigin = "http://0xpersona.club";
+const forwarderOrigin = "https://api.0xpersona.club";
 
 const FullContainer = styled.div`
   width: 540px;
@@ -178,7 +178,7 @@ function AddConnectWalletModal({
       localStorage.setItem("currentWalletAddress", accounts[0]);
       console.log(accounts);
       // 여기에 connect wallet 정보 업데이트 해야함
-      onClose()
+      onClose();
     } catch (error) {
       alert("metamask 확장 프로그램을 설치해주세요.");
       console.error(error);

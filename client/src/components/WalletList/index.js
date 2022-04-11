@@ -13,9 +13,9 @@ import WalletConnect from "../../assets/icons/WalletConnect.svg";
 // import MetamaskInitialize from "../../axios/metamastask";
 import MetaMaskOnboarding from "@metamask/onboarding";
 import CreateProfile from "../CreateProfile";
-import { checkSignup } from "../../axios/auth";
+import { checkSignup, login } from "../../axios/auth";
 
-const forwarderOrigin = "http://0xpersona.club";
+const forwarderOrigin = "https://api.0xpersona.club";
 
 const FullContainer = styled.div`
   width: 540px;
@@ -163,16 +163,24 @@ const WalletList = () => {
         method: "eth_accounts",
       });
       setWalletAddress(accounts[0]);
-      // const isSignup = await checkSignup(accounts[0]);
-      const isSignup = 0 // api 연결 안됐을 때 임시. 위에가 진짜
+      const isSignup = await checkSignup(accounts[0]);
+      // const isSignup = 0 // api 연결 안됐을 때 임시. 위에가 진짜
       localStorage.setItem("currentWalletAddress", accounts[0]);
       console.log(accounts);
       if (isSignup == 1) {
         // signin
-        setAlreadySignup(true)
-        history("/mypage", { state: { isWelcome: true } });
-      }else{
-        setAlreadySignup(false)
+        setAlreadySignup(true);
+        const loginResult = await login(accounts[0]).then((data2) => {
+          console.log(data2);
+          var dataResult = data2.data.result;
+          localStorage.setItem("token", data2.data.result.token);
+          localStorage.setItem("nickname", data2.data.result.userID);
+          history("/mypage", { state: { isWelcome: true } });
+        });
+        console.log(loginResult);
+        // history("/mypage", { state: { isWelcome: true } });
+      } else {
+        setAlreadySignup(false);
       }
     } catch (error) {
       alert("metamask 확장 프로그램을 설치해주세요.");
