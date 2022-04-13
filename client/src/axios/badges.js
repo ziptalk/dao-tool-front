@@ -5,7 +5,7 @@ export const getAllBadges = async (order) => {
     var returnValue = {}
 
     const result = await axios
-      .get(
+      .get(process.env.REACT_APP_DB_HOST +
         `/badges/?orderBy=${order}`,
         // { params: { orderBy: order } },
         {
@@ -33,7 +33,7 @@ export const getAllBadges = async (order) => {
     var returnValue = {}
 
     const result = await axios
-      .get(
+      .get(process.env.REACT_APP_DB_HOST +
         `/badges/?badgeName=${badgeName}`,
         // { params: { badgeName: badgeName } },
         {

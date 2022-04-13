@@ -209,7 +209,7 @@ export const signup = async ({ userInfo, wallet }) => {
 export const login = async (walletAddress) => {
   var returnValue = {};
   const result = await axios
-    .post(`/users/login`, `{"walletAddress": "${walletAddress}"}`, {
+    .post(process.env.REACT_APP_DB_HOST +`/users/login`, `{"walletAddress": "${walletAddress}"}`, {
       headers: {
         "Content-Type": "application/json",
         //   "Access-Control-Allow-Credentials": true,
@@ -220,7 +220,7 @@ export const login = async (walletAddress) => {
       console.log(data);
       console.log(data.data.result.userID);
       localStorage.setItem("nickname", data.data.result.userID)
-      alert(data.data.result.userID);
+    //   alert(data.data.result.userID);
       returnValue = data;
     })
     .catch((error) => {
@@ -233,7 +233,7 @@ export const login = async (walletAddress) => {
 export const getUserpage = async (userId) => {
   var returnValue = {};
   const result = await axios
-    .get(`/users/mypage?userId=${userId}`, {
+    .get(process.env.REACT_APP_DB_HOST +`/users/mypage?userId=${userId}`, {
       headers: {
         "Content-Type": "application/json",
         // "Access-Control-Allow-Credentials": true,
@@ -255,7 +255,7 @@ export const getUserpage = async (userId) => {
 
 export const postAdminBadge = async (name, walletData) => {
   const result = await axios
-    .post(`/admin/badges?badgeName=${name}`, walletData, {
+    .post(process.env.REACT_APP_DB_HOST +`/admin/badges?badgeName=${name}`, walletData, {
       headers: {
         "Content-Type": "application/json",
         "Access-Control-Allow-Credentials": true,
@@ -279,7 +279,7 @@ export const postAdminBadge = async (name, walletData) => {
 
 export const getAdminBadge = async (password) => {
   const result = await axios
-    .get(
+    .get(process.env.REACT_APP_DB_HOST +
       `/admin/badges`,
       { params: { password: "propwave0806!" } },
       {
@@ -313,7 +313,7 @@ export const uploadProfileImage = async (formData) => {
     redirect: "follow",
   };
 
-  const result = await fetch("/images/upload", requestOptions)
+  const result = await fetch(process.env.REACT_APP_DB_HOST +"/images/upload", requestOptions)
     .then((response) => response.text())
     .then((result) => console.log(result))
     .catch((error) => console.log("error", error));
@@ -343,7 +343,7 @@ export const createUser = async (formData) => {
 
   let returnValue = {};
 
-  const result = await fetch("/users/signup/user", requestOptions)
+  const result = await fetch(process.env.REACT_APP_DB_HOST +"/users/signup/user", requestOptions)
     .then((response) => response.text())
     .then((result) => {
       console.log(result);
@@ -375,7 +375,7 @@ export const createWalletList = async (walletList) => {
     redirect: "follow",
   };
 
-  const result = await fetch("/users/signup/wallets", requestOptions)
+  const result = await fetch(process.env.REACT_APP_DB_HOST +"/users/signup/wallets", requestOptions)
     .then((response) => {
       console.log(response);
       response.text();
@@ -399,7 +399,7 @@ export const deleteUser = async (userData) => {
   let returnValue = {};
 
   const result = await axios
-    .delete(`/users`, {
+    .delete(process.env.REACT_APP_DB_HOST +`/users`, {
       data: userData,
       headers: {
         "Content-Type": "application/json",
@@ -428,7 +428,7 @@ export const editProfile = async (formData) => {
 
   let returnValue = {};
 
-  const result = await fetch("/users/mypage", requestOptions)
+  const result = await fetch(process.env.REACT_APP_DB_HOST +"/users/mypage", requestOptions)
     .then((response) => response.text())
     .then((result) => {
       console.log(result);

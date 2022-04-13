@@ -190,7 +190,7 @@ const UserPage = () => {
         console.log("here");
         setUserInfo(data.data.result);
       } else {
-        alert("fucking");
+        alert("오류가 발생했습니다!");
       }
     }).catch((error)=>{
       // alert(error)

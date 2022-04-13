@@ -435,8 +435,8 @@ const EditProfile = ({
     localStorage.setItem("nickname", userName);
 
     onClose();
-    // history("/mypage", { state: { isWelcome: false } });
-    // window.location.href = "/mypage";
+    history("/mypage", { state: { isWelcome: false } });
+    window.location.href = "/mypage";
   };
 
   const hiddenFileInput = useRef(null);
